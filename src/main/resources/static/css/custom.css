@@ -1,0 +1,186 @@
+@charset "utf-8";
+
+/* btn */
+.btn.gray {border:none; background-color:#63687b; color:#fff;}
+.btn.blue {border:none; background-color: #218ace; color:#fff;}
+.btn.red {border:#d41221 1px solid; background-color:#e60012; color:#fff;}
+
+/* padding */
+.p-0,.py-0,.pt-0{padding-top: 0px !important;}
+.p-0,.py-0,.pb-0{padding-bottom: 0px !important;}
+.p-0,.px-0,.pr-0{padding-right: 0px !important;}
+.p-0,.px-0,.pl-0{padding-left: 0px !important;}
+.p-10,.py-10,.pt-10{padding-top: 10px !important;}
+.p-10,.py-10,.pb-10{padding-bottom: 10px !important;}
+.p-10,.px-10,.pr-10{padding-right: 10px !important;}
+.p-10,.px-10,.pl-10{padding-left: 10px !important;}
+.p-20,.py-20,.pt-20{padding-top: 20px !important;}
+.p-20,.py-20,.pb-20{padding-bottom: 20px !important;}
+.p-20,.px-20,.pr-20{padding-right: 20px !important;}
+.p-20,.px-20,.pl-20{padding-left: 20px !important;}
+
+/* margin */
+.m-0,.my-0,.mt-0{margin-top: 0px !important;}
+.m-0,.my-0,.mb-0{margin-bottom: 0px !important;}
+.m-0,.mx-0,.mr-0{margin-right: 0px !important;}
+.m-0,.mx-0,.ml-0{margin-left: 0px !important;}
+.m-10,.my-10,.mt-10{margin-top: 10px !important;}
+.m-10,.my-10,.mb-10{margin-bottom: 10px !important;}
+.m-10,.mx-10,.mr-10{margin-right: 10px !important;}
+.m-10,.mx-10,.ml-10{margin-left: 10px !important;}
+.m-20,.my-20,.mt-20{margin-top: 20px !important;}
+.m-20,.my-20,.mb-20{margin-bottom: 20px !important;}
+.m-20,.mx-20,.mr-20{margin-right: 20px !important;}
+.m-20,.mx-20,.ml-20{margin-left: 20px !important;}
+
+/* display */
+.dp-block{display: block !important;}
+.dp-inline-b{display: inline-block !important;}
+.dp-none{display: none !important;}
+
+/* flot */
+.fl-r{float: right;}
+.fl-l{float: left;}
+.clear-fl:after{clear: both; content: ""; display: block;}
+
+/* color */
+.text-white{color: white !important;}
+
+/* width */
+.w-auto{width: auto !important;}
+
+/* height */
+.hfull {height: 100% !important;}
+.h-auto{height: auto;}
+.h120{height: 120px;}
+.h-180px{height: 180px;}
+.h-240px{height: 240px;}
+.h-300px{height: 300px;}
+.h-350px{height: 350px;}
+
+/* overflow */
+.overflow-auto{overflow-y: auto;}
+.overflow-x-auto{overflow-x: auto;}
+
+/* position */
+.position-relative{position: relative;}
+.position-absolute {position: absolute;}
+
+.i-btn.arrow-left,.i-btn.arrow-right{background: url(../images/btn_arrow_up.png) 50% 50% no-repeat;}
+.i-btn.arrow-left{transform: rotate(270deg);}
+.i-btn.arrow-right{transform: rotate(90deg);}
+
+/* total */
+span.total-cnt {
+	background: transparent;
+	position: absolute;
+	padding: 3px 0;
+	top: 15px;
+}
+
+span.total-cnt strong {
+	padding: 0 3px;
+	color: #ec374b;
+	vertical-align: middle;
+}
+
+/* i */
+i.i-excel {
+	width: 17px;
+	height: 17px;
+	background: url(../images/icon-excel.png) no-repeat;
+	margin-right: 5px;
+}
+
+/* etc */
+.position-relative.listbottom {
+	margin: 0;
+	display: inline-block;
+	width: 100%;
+}
+
+.btn.btn-right {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.r-btn-group {
+	position: absolute;
+	right: 0;
+	top: -8px;
+}
+
+p.cmt {
+	white-space: pre-line;
+}
+
+p.icon-file::before {
+	width: 14px;
+	height: 17px;
+	display: inline-block;
+	content: '';
+	background-image: url(../images/icon-note.png);
+	background-repeat: no-repeat;
+	vertical-align: middle;
+}
+
+p.icon-file {
+	cursor: pointer;
+}
+
+p.icon-file.file-none {
+	opacity: .3;
+	cursor: auto;
+}
+
+/* 사용자 권한 */
+table.auth-table tbody tr td {
+	height: 38px;
+	padding: 4px 0;
+}
+
+/* table no data */
+tr.tbl-data-none td {
+	padding: 10px 0 !important;
+}
+
+tr.tbl-data-none:hover td, tr.tbl-data-none:focus td {
+	background-color: transparent !important;
+}
+
+.tabAthcontents {
+	display: none;
+}
+
+.tabAthcontents.on {
+	display: block;
+}
+
+/* table 필수입력 표시 */
+table tr th.bullet:before {content: '*';width: 5px;height: 5px;display: inline-block;margin-right: 5px;color: #e60012;}
+
+/* 데이터 관리에서 에러메시지 출력 */
+div#divErrorMng {
+	bottom: 5px;
+	color: red;
+}
+
+/* 데이터 관리 - 그룹코드 선택 */
+ul#slbModalTypeGrp li:hover {
+	cursor: pointer;
+}
+
+td.pointer {
+	cursor: pointer;
+}
+
+td.trGeomType1 label, td.trGeomType1 label span {
+	font-size: 11px;
+	cursor: auto;
+}
+
+/* 편집관리 */
+.appr_list tbody tr:not(.on):hover, .appr_fct_list tbody tr:not(.on):hover {
+	cursor: pointer;
+}

@@ -4,14 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/")
 public class HomeController {
 
     @GetMapping
-    public String homeController(){
-        //로그인 체크로직 추가
+    public String homeController(HttpSession session){
 
-        return "redirect:/board";
+        if(session.getAttribute("USER_ID") == null) {
+            return "redirect:/login";
+        }
+
+        return "redirect:/system/board";
     }
 }

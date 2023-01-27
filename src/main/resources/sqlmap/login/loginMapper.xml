@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="o2.o2web.login.dao.LoginDAO">
+
+    <resultMap id="userSelectMap" type="user">
+        <result property="userId" column="USR_ID" jdbcType="VARCHAR"/>
+        <result property="userName" column="USR_NM" jdbcType="VARCHAR"/>
+        <result property="userPwd" column="USR_PW" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getUserById" parameterType="String" resultMap="userSelectMap">
+        select USR_ID, USR_NM, USR_PW
+        from GM_USR_INF
+        where USR_ID = #{userId}
+    </select>
+
+</mapper>

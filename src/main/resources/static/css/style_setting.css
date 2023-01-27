@@ -1,0 +1,249 @@
+﻿.style-setting i{
+	display: inline-block;
+    overflow: hidden;
+    background: url(../images/style/bg_icon.png) no-repeat;
+    line-height: 999px;
+    vertical-align: middle;
+}
+
+/* 스타일 설정 */
+.style-setting .box-flex .left {width: 480px; border: 0px; margin-right: 20px; position: relative; z-index: 10;}
+.style-setting .map-img {height: 100%;}
+.style-setting .map-legend {position: absolute; right: 0; bottom: 0; width: 100px; height: 140px; background-color: rgba(0, 0, 0, 0.7); border:  rgba(0, 0, 0, 0.8) 1px solid; z-index: 20;}
+/* .style-setting .box-flex .right {width: 360px;} */
+/* .style-setting .box-flex .right .top {margin-bottom: 10px;} */
+.style-setting .top {margin-bottom: 10px;}
+/* .style-setting .box-flex .right .top .select-box, .style-setting .box-flex .right .top .select-box select {width: 200px;} */
+/* .style-setting .setting-box {height: calc(100% - 40px); padding: 14px 10px; border: #eaeaea 1px solid; overflow-y: auto;} */
+.style-setting .setting-box {height: 430px; padding: 14px 10px; border: #eaeaea 1px solid; overflow-y: auto;}
+.style-setting .setting-box .s-group h2 {margin-bottom: 10px;}
+.style-setting .setting-box .s-group +.s-group {margin-top: 20px;}
+.style-setting .setting-box input[type="radio"] + label span {margin-right: 7px;}
+.style-setting .setting-box .s-group .inner-box {padding: 10px 12px; border: #eaeaea 1px solid;}
+.style-setting .setting-box .s-items {}
+.style-setting .setting-box .s-items + .s-items {margin-top: 10px;}
+.style-setting .setting-box .s-items h3 {margin: 0 0 5px 0; font-weight: 600;}
+.style-setting .setting-box .s-items h3::before {content: none;}
+.style-setting .setting-box .s-items .shape {}
+.style-setting .setting-box .s-items .shape li {display: inline-flex; justify-content: center; align-items: center; width: calc(20% - 5px); height: 55px; margin: 2px 1px 3px; border-radius: 3px; border: #eaeaea 1px solid; cursor: pointer;}
+.style-setting .setting-box .s-items .shape li:hover {background-color: #f1f5fe;}
+.style-setting .setting-box .s-items .shape li.on {background-color: #f1f5fe; border-color: #06694f;}
+.style-setting .setting-box .s-items.f-line {display: flex; justify-content: space-between; align-items: center;}
+.style-setting .setting-box .s-items.f-line h3 {width: 70px; margin: 0;}
+.style-setting .setting-box .s-items.f-line h3 + div {margin-left: 20px; width: calc(100% - 90px);}
+.line-box {display: inline-block; height: 30px; padding: 3px; border-radius: 3px; border: #eaeaea 1px solid; vertical-align: middle;}
+input[type="number"] + .line-box {margin-left: 7px;}
+.color-bar {width: 100%; height: 100%; cursor: pointer; border-radius: 3px;}
+.color-line {width: calc(100% - 10px); height: 45%; margin: 7px 5px 0; cursor: pointer; border-bottom: #f9ad44 2px dashed; border-top: #00c8e5 2px dotted;}
+.color-patten {width: calc(100% - 10px); height: 45%; margin: 7px 5px 0; cursor: pointer; border-bottom: #f9ad44 2px dashed; border-top: #00c8e5 2px dotted; background-color: #666;}
+.line-slider {height: 30px; padding: 13px 4px;}
+.line-slider .linebg {height: 6px; background-color: #dfdfdf; border: #cccfd4 1px solid; position: relative;}
+.line-slider .linebg .slider-bar {position: absolute; width: 24px; height: 24px; top: -10px; background-color: #06694f; border: #055d46 1px solid; border-radius: 50%; color: #fff; font-size: 12px; text-align: center; line-height: 24px; cursor: pointer;}
+.style-setting .s-items .table.list button {height: 20px !important;}
+.style-setting .s-items .table.list .i-btn {width: 20px; padding: 0;}
+.style-setting .s-items .table.list .i-btn i {width: 10px; height: 10px;}
+.style-setting .s-items .table.list .btn {padding: 0px 5px 0; font-size: 12px;}
+.style-setting .s-items .overflow-y .table.list td.tx-left {border-right: none;}
+.style-setting .s-items .overflow-y .table.list td.tx-left .rule_name{cursor: pointer;}
+i.i-add {background-position: -107px -5px;}
+i.i-del {background-position: -133px -5px;}
+
+.p-rule {width: 500px;}
+.p-rule .box-flex {padding: 0 20px 20px;}
+.p-rule .left {width:150px; margin-right: 20px;}
+.p-rule .left h3 {margin: 0 0 10px;}
+.p-rule .left .inner-box {height: 284px; border: #ccc 1px solid; overflow-y: auto;}
+.p-rule .left .inner-box li {padding: 6px 10px; border-bottom: #f2f2f2 1px solid;}
+.p-rule .left .inner-box li.on, .p-rule .right .btn-area .btn.on {background-color: #f1f5fe;}
+.p-rule .right {width: 290px; padding-top: 28px;}
+.p-rule .right .btn-area .btn {width: 54px; padding: 7px 6px 6px; margin-bottom: 5px; text-align: center;}
+.p-rule .right .btn-area .btn.wide {width: 141px;}
+.p-rule .right textarea {width: 287px; height: 99px;}
+
+.p-rule .left .inner-box li{cursor: pointer;}
+.p-rule .left .inner-box li:hover{background-color: #f0f1f4;}
+
+/* position */
+.style-setting{position: relative;}
+.style-setting .edit_tab{position: relative;}
+.style-setting .edit_tab .top {position: absolute; top: 0px; left:0px; z-index: 99;}
+
+/* size 조정 */
+.style-setting .box-flex .right .top .select-box, 
+.style-setting .box-flex .right .top .select-box select{width: 160px;}
+.style-setting input[type=text], .style-setting input[type=number], .style-setting select{height: 26px; line-height: 24px;}
+.style-setting .line-box{height: 26px;}
+.style-setting .setting-box .s-items .shape li{height: 48px;}
+.style-setting .select-box.wfull select{width: calc(100% - 2px);}
+.style-setting .setting-box .s-items + .s-items{margin-top: 6px;}
+.style-setting .setting-box .s-group +.s-group{margin-top: 10px;}
+
+/* tab */
+.style-setting .tabs{height: 34px;width: 100%;}
+.style-setting .tabs:after {background: #eaeaea;}
+.style-setting .tabs li{width: 84px;}
+.style-setting .tabs li:first-child{position: absolute; right: 84px;}
+.style-setting .tabs li:last-child{position: absolute; right: 0px;}
+.style-setting .tabs li a{border-top: 1px solid #eaeaea;border-right: 1px solid #eaeaea;border-bottom: 1px solid #eaeaea;border-left: none; padding: 7px 20px; text-align: center; width: 100%;}
+.style-setting .tabs li:first-child a{border-left: 1px solid #eaeaea;}
+.style-setting .tabcontents{padding-top: 0;}
+.style-setting .setting-box{border-top: 0;}
+
+/* sld tab */
+.sld_tab{padding: 10px;height: 442px; border: #eaeaea 1px solid;}
+.sld_tab textarea{width: 100%; height: 100%; resize: none;}
+
+/* 단일에서 타입 선택 시 화면 넘치지 않도록  */
+/* .style-setting .edit_single{height: 100%;overflow: hidden;} */
+
+/* zoom slider */
+.style-setting .ui-slider {
+    position: relative;
+    width: calc(100% - 24px);
+    height: 6px;
+    background-color: #dfdfdf;
+    border: #cccfd4 1px solid;
+    margin-left: 12px;
+}
+.style-setting .ui-slider .ui-slider-handle {
+	position: absolute;
+    width: 24px;
+    height: 24px;
+    top: -10px;
+    background-color: #4c77b0;
+    border: #4c77b0 1px solid;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+    margin-left: -12px;
+    background-image: none;
+}
+
+/* 이미지 영역 배치 */
+.style-setting .flex-box{display: flex;}
+.style-setting .flex-box.image-cover .shape{width: calc(100% - 60px); padding: 0px 5px;}
+.style-setting .flex-box.image-cover .btn-corver{border: 1px solid #d7d7d7; border-radius: 4px; margin: 2px 0px 3px; cursor: pointer;}
+
+/* 이미지 좌우 이동 버튼 디자인 */
+.style-setting .flex-box.image-cover .btn-corver:before {content: "";display: inline-block;width: 1px;height: calc(50% - 14px);margin-right: 0; vertical-align: middle;}
+.style-setting .flex-box.image-cover .i-btn{height: 100%;border: none; height: 28px; width: 28px;}
+
+/* 이미지 목록 크기 조정 */
+.style-setting .setting-box .s-items .flex-box.image-cover .shape li{width: calc(20% - 4px);float: left;margin: 2px 5px 3px 0;}
+.style-setting .setting-box .s-items .flex-box.image-cover .shape li:nth-child(5n+5){margin-right: 0px;}
+
+/* dash */
+.style-setting .dashed{display: block;border: 1px dashed #eaeaea;margin: 10px 0px;}
+
+/* 분류 버튼 */
+.style-setting .classify_btn{height: 28px;line-height: 28px;padding: 0;}
+
+/* for admin */
+.i-btn.arrow-left {transform: rotate(270deg);}
+.i-btn.arrow-right {transform: rotate(90deg);}
+
+/* 기타 디자인 */
+.w30{width: 30px;}
+.style-setting input[type="radio"] + label span{margin: 0px 7px 0 0;}
+.style-setting .rule_name{cursor: pointer; text-decoration: underline;font-style: italic;}
+.style-setting .rule_list tbody tr td{white-space: normal;}
+.style-setting .rule_list tbody tr td:first-child{position: relative;}
+.style-setting .rule_list tbody tr td .center-item{display: flex; align-items: center;}
+.style-setting .rule_list tbody tr td svg{margin: auto;}
+.style-setting .rule_list.line-symbol tbody tr td svg{left: calc(50% - 18px);}
+
+
+/* spectrum override */
+.style-setting .sp-replacer{height: 100%;}
+.style-setting .sp-replacer,.style-setting .sp-replacer:hover,.style-setting .sp-replacer.sp-active {padding: 0;border: none;width: 100%;}
+.style-setting .sp-preview{width: 100%;height: 100%;}
+.style-setting .sp-dd{display: none;padding: 0;}
+
+
+
+/* 스타일 팝업 하단 버튼 */
+.edit_style_pop .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button.trash{
+	background-image: url(../images/ico_trash_24x24.png);
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+    left: 20px;
+	width: 32px;
+	padding: 0;
+}
+.edit_style_pop .ui-dialog-buttonpane .ui-dialog-buttonset .ui-button.left{
+	left: 52px;
+}
+
+
+
+/* 토글 버튼 */
+
+/* The switch - the box around the slider */
+.toggle label.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 24px;
+  vertical-align:middle;
+}
+
+/* Hide default HTML checkbox */
+.toggle label.switch input {display:none;}
+
+/* The slider */
+.toggle label.switch .slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #06694f;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.toggle label.switch .slider:before {
+	position: absolute;
+	content: "";
+	height: 16px;
+	width: 16px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.toggle label.switch input:checked+.slider {
+	background-color: #404d60;
+	text-align: left;
+	padding-left: 8px;
+}
+
+.toggle label.switch input:focus+.slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+
+.toggle label.switch input:checked+.slider:before {
+	-webkit-transform: translateX(36px);
+	-ms-transform: translateX(36px);
+	transform: translateX(36px);
+}
+
+/* Rounded sliders */
+.toggle label.switch .slider.round {
+	border-radius: 12px;
+	color: white;
+	text-align: right;
+	padding-right: 8px;
+	line-height: 24px;
+}
+
+.toggle label.switch .slider.round:before {
+ 	border-radius: 50%;
+}
