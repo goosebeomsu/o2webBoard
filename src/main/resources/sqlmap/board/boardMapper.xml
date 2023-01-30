@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="o2.o2web.system.board.dao.BoardDAO">
+
+    <resultMap id="boardSelectMap" type="board">
+        <result property="boardId" column="BRD_ID" jdbcType="VARCHAR"/>
+        <result property="boardTitle" column="BRD_TITLE" jdbcType="VARCHAR"/>
+        <result property="convertedBoardContent" column="BRD_CONT" jdbcType="BLOB"/>
+        <result property="boardType" column="BRD_TYPE" jdbcType="VARCHAR"/>
+        <result property="viewCount" column="VIEW_CNT" jdbcType="INTEGER"/>
+        <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
+        <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="addBoard" parameterType="board">
+        INSERT INTO CMT_BRD(BRD_ID, BRD_TITLE, BRD_CONT, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE)
+        VALUES(#{boardId}, #{boardTitle}, #{convertedBoardContent}, 0, #{registrationUser}, sysdate, #{boardType})
+    </insert>
+
+    <select id="getBoardList" parameterType="search" resultMap="boardSelectMap">
+        SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT
+        FROM CMT_BRD
+        WHERE BRD_TYPE = #{boardType}
+    </select>
+
+</mapper>

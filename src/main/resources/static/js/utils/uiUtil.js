@@ -1,7 +1,7 @@
 (function(){
     let _class = {
         load : function($id, url) {
-            var deferred = $.Deferred();
+            let deferred = $.Deferred();
 
             if ($($id).length == 0) {
                 console.log("[" + $id + "] is null");

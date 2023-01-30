@@ -2,12 +2,15 @@ var AppLibFiles = {
 
     JS: {
         Ref: [
+            "lib/o2map/o2map.src.js",
+            "lib/tinymce/tinymce.min.js"
         ],
 
         Core: [
             "js/o2web.js",
             "js/common/commonEvent.js",
             "js/utils/uiUtil.js",
+            "js/system/board/board.js",
             "js/system/board/boardAdd.js",
         ]
     },

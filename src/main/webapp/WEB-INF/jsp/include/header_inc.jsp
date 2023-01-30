@@ -7,7 +7,6 @@
 
 <script src="/js-package.js"></script>
 <script src="/js-loader.js"></script>
-<script src="/node_modules/tinymce/tinymce.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function (){

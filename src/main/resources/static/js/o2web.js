@@ -7,4 +7,8 @@
 		utils : {},
 	}
 
+	o2web.system = {
+		board : {}
+	}
+
 })();

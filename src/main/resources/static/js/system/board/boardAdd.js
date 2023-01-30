@@ -1,45 +1,83 @@
 window.onload = function (){
 
+    let $DLG_UI = $("#o2-dialog-01");
 
-    document.querySelector("#add").addEventListener("click", renderNoticeForm);
 
-    function renderNoticeForm() {
+    document.querySelector("#add").addEventListener("click", renderBoardPopup);
 
-        document.querySelector('#o2-dialog-01').innerHTML = getNoticeFormHtml();
+    function renderBoardPopup() {
 
-        tinymce.init({
-            selector: '#o2-dialog-01'
-        })
+        let htmlURL = "http://localhost:8888/design/system/board/boardAdd.html"
+        //http://localhost:8888안붙였을때 경로에 system 추가하는 이유??
+
+        o2web.utils.UIUtil.load($DLG_UI.selector, htmlURL).done(function() {
+            $DLG_UI.dialog({
+
+                title : '공지사항',
+                modal : true,
+                width : 800,
+                resizable : false,
+                buttons :[{
+                    text : "취소",
+                    "class" : "btn",
+                    click : function() {
+                        $(this).dialog("close");
+                    }
+                }, {
+                    text : "추가",
+                    "class":"btn blue",
+                    click : function () {
+                        _$selfdig = $(this);
+                        //유효성 추가예정
+                        addNotice().then(value => {
+                            _$selfdig.dialog("close");
+                        })
+                    }
+                }],
+                open : function (){
+                    editData();
+                },
+                close : function(){
+                    tinymce.execCommand("mceRemoveEditor", false, "detail_cont");
+                    $(this).dialog("destroy").empty();
+                }
+
+            });
+        });
 
     }
 
-    function getNoticeFormHtml() {
-        return
-        `<!DOCTYPE html>
-<div class="contents brdpop" id="boardAdd">
-    <h3>내용</h3>
-    <table class="table form">
-        <caption>게시판 보기</caption>
-        <colgroup>
-            <col width ="20%">
-            <col width ="80%">
-        </colgroup>
-        <tbody>
-        <tr id="">
-            <th class="bullet">제목</th>
-            <td><input type="text" id = "Title" class="wfull" value="" placeholder="제목을  입력해주세요" title="제목"/></td>
-        </tr>
-        <tr id="">
-            <th>내용</th>
-            <td  class="p-0">
-                <div class="h300 overflow-y editor-cont" id="detail_cont"></div>
-            </td>
-        </tr>
+    function editData() {
+        tinymce.init({ // editor 실행
+            selector : '#detail_cont',
+            height : 300,
+            max_height : 300,
+            resize : false,
+            menubar : false,
+            toolbar : [ 'undo redo | bold italic underline | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify' ],
+            branding : false,
+            statusbar : false,
+            forced_root_block : ''
+        });
+    }
 
+    function addNotice() {
 
-        </tbody>
-    </table>
-</div>`
+        const requestURL = "http://localhost:8888/system/board/add";
+
+        let param = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                boardTitle : $("#Title").val(),
+                boardContent : tinymce.get("detail_cont").getContent(),
+                boardType : 'NOTICE',
+            })
+        }
+
+        return fetch(requestURL, param).then((resolve) => {return resolve.json()});
     }
 
 }
