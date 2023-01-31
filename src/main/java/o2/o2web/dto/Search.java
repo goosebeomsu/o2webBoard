@@ -6,4 +6,7 @@ import lombok.Data;
 public class Search {
 
     private String boardType;
+    private String searchType;
+    private String searchValue;
+
 }

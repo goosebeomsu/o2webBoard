@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -31,7 +33,6 @@ public class BoardController {
 
     @PostMapping("/add")
     public String addBoard(@RequestBody Board board, HttpServletRequest request) {
-        System.out.println("board = " + board);
 
         String userId = (String) request.getSession().getAttribute("USER_ID");
         String boardId = UUID.randomUUID().toString();
@@ -50,10 +51,14 @@ public class BoardController {
     //조회는 무조건 get? 검색조건등이 많을때
     @PostMapping("/getBoardList")
     @ResponseBody
-    public List getBoardList(@RequestBody Search search) {
-        List boardList = boardService.getBoardList(search);
-        System.out.println("boardList = " + boardList);
-        return boardList;
+    public Map getBoardList(@RequestBody Search search) {
+
+        List boardList = boardService.getBoardListRes(search);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("boardList", boardList);
+
+        return resultMap;
     }
 
 }

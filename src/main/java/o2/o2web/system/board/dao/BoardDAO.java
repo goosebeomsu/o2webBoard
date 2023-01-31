@@ -11,5 +11,5 @@ public interface BoardDAO {
 
     Integer addBoard(Board board);
 
-    List getBoardList(Search search);
+    List getBoardResList(Search search);
 }

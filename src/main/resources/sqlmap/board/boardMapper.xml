@@ -15,15 +15,33 @@
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
     </resultMap>
 
+    <resultMap id="boardListResSelectMap" type="GetBoardListRes">
+        <result property="boardId" column="BRD_ID" jdbcType="VARCHAR"/>
+        <result property="boardTitle" column="BRD_TITLE" jdbcType="VARCHAR"/>
+        <result property="viewCount" column="VIEW_CNT" jdbcType="INTEGER"/>
+        <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
+        <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
+    </resultMap>
+
     <insert id="addBoard" parameterType="board">
         INSERT INTO CMT_BRD(BRD_ID, BRD_TITLE, BRD_CONT, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE)
         VALUES(#{boardId}, #{boardTitle}, #{convertedBoardContent}, 0, #{registrationUser}, sysdate, #{boardType})
     </insert>
 
-    <select id="getBoardList" parameterType="search" resultMap="boardSelectMap">
+    <select id="getBoardResList" parameterType="search" resultMap="boardListResSelectMap">
         SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT
         FROM CMT_BRD
         WHERE BRD_TYPE = #{boardType}
+
+        <if test='searchType == "BRD_TITLE" and searchValue != null'>
+            AND BRD_TITLE LIKE '%'||#{searchValue}||'%'
+        </if>
+
+        <if test='searchType == "REG_USR" and searchValue != null'>
+            AND REG_USR LIKE '%'||#{searchValue}||'%'
+        </if>
+
+        ORDER BY REG_DT DESC
     </select>
 
 </mapper>

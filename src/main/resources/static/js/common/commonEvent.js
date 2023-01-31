@@ -7,7 +7,14 @@
             document.querySelector('#btnLogout').addEventListener("click", function (){
                 location.href = '/login/logout'
             })
+
+            //리스트 불러오기
+            o2web.system.board.BrdMain();
         }
+
+
+
+
     }
 
     o2web.common = Object.assign(o2web.common || {}, {

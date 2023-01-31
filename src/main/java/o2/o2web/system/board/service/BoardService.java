@@ -22,7 +22,7 @@ public class BoardService {
          boardDAO.addBoard(board);
     }
 
-    public List getBoardList(Search search) {
-        return boardDAO.getBoardList(search);
+    public List getBoardListRes(Search search) {
+        return boardDAO.getBoardResList(search);
     }
 }

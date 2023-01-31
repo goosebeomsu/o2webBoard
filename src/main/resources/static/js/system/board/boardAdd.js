@@ -30,6 +30,7 @@ window.onload = function (){
                         _$selfdig = $(this);
                         //유효성 추가예정
                         addNotice().then(value => {
+                            o2web.system.board.BrdMain();
                             _$selfdig.dialog("close");
                         })
                     }
