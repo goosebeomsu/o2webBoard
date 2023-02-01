@@ -22,7 +22,7 @@ class BoardServiceTest {
         Board boardTest = new Board();
         boardTest.setBoardId("test1");
         boardTest.setBoardTitle("aaaa");
-        boardTest.setBoardContent("cccccc");
+        boardTest.setBoardContent("ccccc");
         boardTest.setBoardType("NOTICE");
         boardTest.setRegistrationUser("user1");
 

@@ -6,6 +6,8 @@ import o2.o2web.system.board.dao.BoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -18,11 +20,35 @@ public class BoardService {
         this.boardDAO = boardDAO;
     }
 
-    public void addBoard(Board board) {
-         boardDAO.addBoard(board);
+    public Integer addBoard(Board board) {
+        return boardDAO.addBoard(getConvertedBoard(board));
     }
 
     public List getBoardListRes(Search search) {
         return boardDAO.getBoardResList(search);
     }
+
+    public Board getBoard(String boardId) throws SQLException {
+
+        Board board = boardDAO.getBoardById(boardId);
+
+        if(board != null){
+            Blob blobBoardContent = (Blob) board.getBoardContent();
+            byte[] byteArrBoardContent = blobBoardContent.getBytes(1, (int) blobBoardContent.length());
+            board.setBoardContent(new String(byteArrBoardContent));
+        }
+
+        return board;
+    }
+
+    public Integer updateBoard(Board board) {
+        return boardDAO.updateBoard(getConvertedBoard(board));
+    }
+
+    private Board getConvertedBoard(Board board) {
+        byte[] byteArrayBoardContent = board.getBoardContent().toString().getBytes();
+        board.setByteArrayBoardContent(byteArrayBoardContent);
+        return board;
+    }
+
 }

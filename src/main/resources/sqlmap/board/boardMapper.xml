@@ -8,7 +8,7 @@
     <resultMap id="boardSelectMap" type="board">
         <result property="boardId" column="BRD_ID" jdbcType="VARCHAR"/>
         <result property="boardTitle" column="BRD_TITLE" jdbcType="VARCHAR"/>
-        <result property="convertedBoardContent" column="BRD_CONT" jdbcType="BLOB"/>
+        <result property="boardContent" column="BRD_CONT" jdbcType="BLOB"/>
         <result property="boardType" column="BRD_TYPE" jdbcType="VARCHAR"/>
         <result property="viewCount" column="VIEW_CNT" jdbcType="INTEGER"/>
         <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
@@ -25,7 +25,7 @@
 
     <insert id="addBoard" parameterType="board">
         INSERT INTO CMT_BRD(BRD_ID, BRD_TITLE, BRD_CONT, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE)
-        VALUES(#{boardId}, #{boardTitle}, #{convertedBoardContent}, 0, #{registrationUser}, sysdate, #{boardType})
+        VALUES(#{boardId}, #{boardTitle}, #{byteArrayBoardContent}, 0, #{registrationUser}, sysdate, #{boardType})
     </insert>
 
     <select id="getBoardResList" parameterType="search" resultMap="boardListResSelectMap">
@@ -43,5 +43,17 @@
 
         ORDER BY REG_DT DESC
     </select>
+
+    <select id="getBoardById" parameterType="String" resultMap="boardSelectMap">
+        SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT, BRD_CONT
+        FROM CMT_BRD
+        WHERE BRD_ID = #{boardId}
+    </select>
+
+    <update id="updateBoard" parameterType="board">
+        UPDATE CMT_BRD
+        SET BRD_TITLE = #{boardTitle}, BRD_CONT = #{byteArrayBoardContent}
+        WHERE BRD_ID = #{boardId}
+    </update>
 
 </mapper>

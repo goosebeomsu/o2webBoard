@@ -5,10 +5,13 @@ import o2.o2web.dto.Board;
 import o2.o2web.dto.Search;
 import o2.o2web.system.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +37,12 @@ public class BoardController {
     @PostMapping("/add")
     public String addBoard(@RequestBody Board board, HttpServletRequest request) {
 
+        //세션관련설정 추가하기
         String userId = (String) request.getSession().getAttribute("USER_ID");
         String boardId = UUID.randomUUID().toString();
 
         board.setRegistrationUser(userId);
         board.setBoardId(boardId);
-
-        byte[] convertedBoardContent = board.getBoardContent().toString().getBytes();
-        board.setConvertedBoardContent(convertedBoardContent);
 
         boardService.addBoard(board);
 
@@ -56,9 +57,32 @@ public class BoardController {
         List boardList = boardService.getBoardListRes(search);
 
         Map<String, Object> resultMap = new HashMap<>();
+
         resultMap.put("boardList", boardList);
 
         return resultMap;
+    }
+
+//    @GetMapping("/{boardId}")
+//    @ResponseBody
+//    public Board getBoardDetail(@PathVariable String boardId) throws SQLException {
+//        return boardService.getBoard(boardId);
+//    }
+
+    @GetMapping("/{boardId}")
+    @ResponseBody
+    public ResponseEntity<Board> getBoard(@PathVariable String boardId) throws SQLException {
+
+        return new ResponseEntity<>(boardService.getBoard(boardId), HttpStatus.OK);
+    }
+
+    @PostMapping("/update/{boardId}")
+    @ResponseBody
+    public ResponseEntity<Board> updateBoard(@RequestBody Board board) {
+
+        boardService.updateBoard(board);
+        //수정예정, add update 는 어떤식으로 응답주는게 좋을까
+        return new ResponseEntity<>(board, HttpStatus.OK);
     }
 
 }

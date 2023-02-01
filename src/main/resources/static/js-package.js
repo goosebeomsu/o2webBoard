@@ -12,6 +12,7 @@ var AppLibFiles = {
             "js/utils/uiUtil.js",
             "js/system/board/board.js",
             "js/system/board/boardAdd.js",
+            "js/system/board/boardDetail.js"
         ]
     },
 

@@ -1,12 +1,13 @@
 (function (){
     let _class = function (boardType = 'NOTICE'){
 
+        let $DLG_UI = $("#sysBrdMng_page");
+
         let selectedBoardType = boardType;
         let searchType = 'BRD_TITLE';
         let searchValue = null;
 
         function initialize() {
-
             initEvent();
             renderBoardList(selectedBoardType, searchType, searchValue);
         }
@@ -15,14 +16,17 @@
             //getBoardList 안에서 boardType이 왜 언디파인드??
             let boardList = await getBoardList(selectedBoardType, searchType, searchValue);
             let boardListHTML = getBoardListHTML(boardList);
-            //검색조건 등 추가
+
             document.querySelector('#DataTablelist').innerHTML = boardListHTML;
+            document.querySelector('.strTotalCnt').innerHTML = boardList.length;
+
+            addEvent();
         }
 
         //전송할때 form데이터 or JSON? 정해진거 따르기?
         async function getBoardList(selectedBoardType, searchType, searchValue) {
 
-            const requestURL = 'http://localhost:8888/system/board/getBoardList';
+            let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/getBoardList';
 
             //조회는 무조건 get?
             let param = {
@@ -45,6 +49,7 @@
 
             //필요한 값만 담은 객체를 따로 생성하는 방법 생각
             return boardList.map((v, i) => {
+
                return `<tr id=${v['boardId']}>
                     <td>
                         <input type="checkbox" name="ckbrdVal" title="선택" id=${'chk' + v['boardId']}>
@@ -56,7 +61,7 @@
                     <td id="regdt">${v['registrationDate']}</td>
                     <td id="cnt">${v['viewCount']}</td>
                     <td>
-                    <button type="button" id="edit">편집</button>
+                    <button type="button" class="btn btnSysCdEdit" id="edit">편집</button>
                     </td>
                </tr>`
             }).join('');
@@ -64,6 +69,11 @@
         }
 
         function initEvent() {
+
+            //클릭시 게시글 추가 팝업
+            document.querySelector("#add").addEventListener("click", () => {
+                o2web.system.board.BrdAdd(selectedBoardType);
+            });
 
             //클릭시 검색조건에 따라 리스트출력
             document.querySelector('.btnGrpCdSearch').addEventListener('click', () => {
@@ -84,6 +94,19 @@
                 initKeywordOptionParam();
                 renderBoardList(selectedBoardType, searchType, searchValue);
             })
+
+        }
+
+        function addEvent() {
+
+            // // 클릭시 편집팝업
+            // document.querySelector('.btnSysCdEdit').addEventListener('click', () => {
+            //     o2web.system.board.BrdDetail(selectedBoardType, $(this).closest("tr").prop("id"))
+            // })
+
+            $DLG_UI.find(".btnSysCdEdit").off("click").on("click",function(){
+                o2web.system.board.BrdDetail(selectedBoardType, $(this).closest("tr").prop("id"));
+            });
         }
 
         function setSearchParam() {

@@ -12,4 +12,8 @@ public interface BoardDAO {
     Integer addBoard(Board board);
 
     List getBoardResList(Search search);
+
+    Board getBoardById(String boardId);
+
+    Integer updateBoard(Board board);
 }
