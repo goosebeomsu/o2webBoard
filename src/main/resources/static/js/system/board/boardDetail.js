@@ -1,6 +1,5 @@
 (function () {
     let _class = function (boardType, boardId){
-
         let $DLG_UI = $("#o2-dialog-01");
 
         function renderBoardEditPopup() {
@@ -18,6 +17,7 @@
                         text : "취소",
                         "class" : "btn",
                         click : function() {
+                            o2web.system.board.BrdMain();
                             $(this).dialog("close");
                         }
                     }, {
@@ -37,7 +37,7 @@
                         click : function(){
                             _$selfdig = $(this);
                             //유효성 추가예정
-                            updateBoard().then(value => {
+                            deleteBoard(boardId).then(value => {
                                 o2web.system.board.BrdMain();
                                 _$selfdig.dialog("close");
                             })
@@ -78,6 +78,17 @@
 
         }
 
+        async function deleteBoard(boardId) {
+            let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/delete/' + boardId
+
+            await fetch(requestURL, {method: 'POST'}).then((response) => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+
+        }
+
         async function getBoardDetail(boardId) {
             let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/' + boardId
 
@@ -90,10 +101,10 @@
         }
 
         function drawBoardDetail(boardDetail) {
-            document.querySelector('#Title').value = boardDetail.boardTitle;
-            document.querySelector('#cnt').innerHTML = boardDetail.viewCount;
-            document.querySelector('#regUsr').innerHTML = boardDetail.registrationUser;
-            document.querySelector('#regDt').innerHTML = boardDetail.registrationDate;
+            $DLG_UI.find("#Title").val(boardDetail.boardTitle);
+            $DLG_UI.find("#cnt").text(boardDetail.viewCount);
+            $DLG_UI.find("#regUsr").text(boardDetail.registrationUser);
+            $DLG_UI.find("#regDt").text(boardDetail.registrationDate);
 
             editData();
 

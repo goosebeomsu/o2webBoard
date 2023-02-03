@@ -2,6 +2,8 @@ package o2.o2web.system.board.controller;
 
 import com.azul.tooling.in.Model;
 import o2.o2web.dto.Board;
+import o2.o2web.dto.DeleteBoardReq;
+import o2.o2web.dto.Message;
 import o2.o2web.dto.Search;
 import o2.o2web.system.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,18 +37,22 @@ public class BoardController {
     }
 
     @PostMapping("/add")
-    public String addBoard(@RequestBody Board board, HttpServletRequest request) {
+    @ResponseBody
+    public ResponseEntity<Message> addBoard(@RequestBody Board board, HttpServletRequest request) {
 
-        //세션관련설정 추가하기
         String userId = (String) request.getSession().getAttribute("USER_ID");
         String boardId = UUID.randomUUID().toString();
 
         board.setRegistrationUser(userId);
         board.setBoardId(boardId);
 
-        boardService.addBoard(board);
+        Integer rs = boardService.addBoard(board);
 
-        return "success";
+        if (rs == null) {
+            return new ResponseEntity<>(new Message("게시글 등록에 실패하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
     }
 
     //조회는 무조건 get? 검색조건등이 많을때
@@ -54,20 +60,17 @@ public class BoardController {
     @ResponseBody
     public Map getBoardList(@RequestBody Search search) {
 
-        List boardList = boardService.getBoardListRes(search);
+        System.out.println("search = " + search);
 
+        List boardList = boardService.getBoardListRes(search);
+        Integer listTotalCount = boardService.getListTotalCount(search);
         Map<String, Object> resultMap = new HashMap<>();
 
         resultMap.put("boardList", boardList);
+        resultMap.put("listTotalCount", listTotalCount);
 
         return resultMap;
     }
-
-//    @GetMapping("/{boardId}")
-//    @ResponseBody
-//    public Board getBoardDetail(@PathVariable String boardId) throws SQLException {
-//        return boardService.getBoard(boardId);
-//    }
 
     @GetMapping("/{boardId}")
     @ResponseBody
@@ -78,11 +81,50 @@ public class BoardController {
 
     @PostMapping("/update/{boardId}")
     @ResponseBody
-    public ResponseEntity<Board> updateBoard(@RequestBody Board board) {
+    public ResponseEntity<Message> updateBoard(@RequestBody Board board) {
 
-        boardService.updateBoard(board);
-        //수정예정, add update 는 어떤식으로 응답주는게 좋을까
-        return new ResponseEntity<>(board, HttpStatus.OK);
+        Integer rs = boardService.updateBoard(board);
+
+        if (rs == null) {
+            return new ResponseEntity<>(new Message("업데이트에 실패하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
     }
 
+    @PostMapping("/delete/{boardId}")
+    @ResponseBody
+    public ResponseEntity<Message> deleteBoard(@PathVariable String boardId) {
+
+        Integer rs = boardService.deleteBoard(boardId);
+
+        if (rs == null) {
+            return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<Message> deleteCheckedBoard(@RequestBody DeleteBoardReq deleteBoardReq) {
+
+        boolean isSuccess = boardService.deleteCheckedBoard(deleteBoardReq.getCheckedIdArr());
+
+        if (isSuccess) {
+            return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/plusViewCount/{boardId}")
+    @ResponseBody
+    public ResponseEntity<Message> plusViewCount(@PathVariable String boardId) {
+
+        boolean isSuccess = boardService.plusViewCount(boardId);
+
+        if (isSuccess){
+            return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

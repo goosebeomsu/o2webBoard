@@ -23,13 +23,33 @@
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
     </resultMap>
 
-    <insert id="addBoard" parameterType="board">
-        INSERT INTO CMT_BRD(BRD_ID, BRD_TITLE, BRD_CONT, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE)
-        VALUES(#{boardId}, #{boardTitle}, #{byteArrayBoardContent}, 0, #{registrationUser}, sysdate, #{boardType})
-    </insert>
-
     <select id="getBoardResList" parameterType="search" resultMap="boardListResSelectMap">
-        SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT
+        SELECT *
+            FROM
+            (SELECT ROWNUM AS RNUM, A.*
+             FROM   (SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT
+                FROM CMT_BRD
+                WHERE BRD_TYPE = #{boardType}
+
+                <if test='searchType == "BRD_TITLE" and searchValue != null'>
+                    AND BRD_TITLE LIKE '%'||#{searchValue}||'%'
+                </if>
+
+                <if test='searchType == "REG_USR" and searchValue != null'>
+                    AND REG_USR LIKE '%'||#{searchValue}||'%'
+                </if>
+                ORDER BY REG_DT DESC) A)
+        <if test="pageNumber != null">
+            WHERE <![CDATA[RNUM <= (#{pageNumber} * #{rowSize})]]>
+            AND <![CDATA[RNUM >= ((#{pageNumber} - 1) * #{rowSize}) + 1]]>
+        </if>
+    </select>
+
+    <select id="getListTotalCount" parameterType="search" resultType="int">
+        SELECT count(*)
+        FROM
+        (SELECT ROWNUM AS RNUM, A.*
+        FROM   (SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT
         FROM CMT_BRD
         WHERE BRD_TYPE = #{boardType}
 
@@ -40,9 +60,13 @@
         <if test='searchType == "REG_USR" and searchValue != null'>
             AND REG_USR LIKE '%'||#{searchValue}||'%'
         </if>
-
-        ORDER BY REG_DT DESC
+        ORDER BY REG_DT DESC) A)
     </select>
+
+    <insert id="addBoard" parameterType="board">
+        INSERT INTO CMT_BRD(BRD_ID, BRD_TITLE, BRD_CONT, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE)
+        VALUES(#{boardId}, #{boardTitle}, #{byteArrayBoardContent}, 0, #{registrationUser}, sysdate, #{boardType})
+    </insert>
 
     <select id="getBoardById" parameterType="String" resultMap="boardSelectMap">
         SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT, BRD_CONT
@@ -55,5 +79,16 @@
         SET BRD_TITLE = #{boardTitle}, BRD_CONT = #{byteArrayBoardContent}
         WHERE BRD_ID = #{boardId}
     </update>
+
+    <update id="updateViewCount" parameterType="String">
+        UPDATE CMT_BRD
+        SET VIEW_CNT = VIEW_CNT + 1
+        WHERE BRD_ID = #{boardId}
+    </update>
+
+    <delete id="deleteBoardById" parameterType="String">
+        DELETE CMT_BRD
+        WHERE BRD_ID = #{boardId}
+    </delete>
 
 </mapper>

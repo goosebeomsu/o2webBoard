@@ -8,6 +8,7 @@
 
             let htmlURL = o2.config.O2Properties.CONTEXTPATH + '/popup/system/board/boardAdd.html';
 
+            //게시글 등록시 내용창 활성화안됨 + 검색이벤트 안먹음
             o2web.utils.UIUtil.load($DLG_UI.selector, htmlURL).done(function() {
                 $DLG_UI.dialog({
 
@@ -76,7 +77,7 @@
                 })
             }
 
-            return fetch(requestURL, param).then((resolve) => {return resolve.json()});
+            return fetch(requestURL, param).then((response) => {return response.json()});
         }
 
         renderBoardAddPopup();

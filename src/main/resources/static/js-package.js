@@ -1,4 +1,4 @@
-var AppLibFiles = {
+let AppLibFiles = {
 
     JS: {
         Ref: [
@@ -8,8 +8,9 @@ var AppLibFiles = {
 
         Core: [
             "js/o2web.js",
-            "js/common/commonEvent.js",
             "js/utils/uiUtil.js",
+            "js/utils/pageRenderer.js",
+            "js/common/commonEvent.js",
             "js/system/board/board.js",
             "js/system/board/boardAdd.js",
             "js/system/board/boardDetail.js"

@@ -45,10 +45,41 @@ public class BoardService {
         return boardDAO.updateBoard(getConvertedBoard(board));
     }
 
+    public Integer deleteBoard(String boardId) {
+        return  boardDAO.deleteBoardById(boardId);
+    }
+
+    public boolean deleteCheckedBoard(String[] checkedIdArr) {
+        //예외발생시 롤백인데 삭제할때 잘못된아이디들어가도 예외는아님
+        Integer totalCount = 0;
+
+        for (String boardId : checkedIdArr) {
+            Integer deleteCount = boardDAO.deleteBoardById(boardId);
+            totalCount += deleteCount;
+        }
+
+        if (totalCount != checkedIdArr.length) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean plusViewCount(String boardId) {
+        Integer rs = boardDAO.updateViewCount(boardId);
+
+        if(rs != 1) {
+            return false;
+        }
+        return true;
+    }
+
     private Board getConvertedBoard(Board board) {
         byte[] byteArrayBoardContent = board.getBoardContent().toString().getBytes();
         board.setByteArrayBoardContent(byteArrayBoardContent);
         return board;
     }
 
+    public Integer getListTotalCount(Search search) {
+        return boardDAO.getListTotalCount(search);
+    }
 }

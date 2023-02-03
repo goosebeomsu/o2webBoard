@@ -4,29 +4,76 @@
         let $DLG_UI = $("#sysBrdMng_page");
 
         let selectedBoardType = boardType;
-        let searchType = 'BRD_TITLE';
-        let searchValue = null;
+        let _rowSize = null;
+        let _param = null;
+        let totalCount = null;
 
         function initialize() {
+            _rowSize = 10;
+            _param = {
+                boardType : selectedBoardType,
+                searchType : 'BRD_TITLE',
+                searchValue : null,
+                pageNumber : null,
+                rowSize : null,
+            }
+
             initEvent();
-            renderBoardList(selectedBoardType, searchType, searchValue);
+            drawList()
         }
 
-        async function renderBoardList(selectedBoardType, searchType, searchValue) {
-            //getBoardList 안에서 boardType이 왜 언디파인드??
-            let boardList = await getBoardList(selectedBoardType, searchType, searchValue);
-            let boardListHTML = getBoardListHTML(boardList);
+        function drawList (pageNum) {
+            if(!o2.defined(pageNum)) { pageNum = 1; }
+            $DLG_UI.find("#DataTablelist").html('');
 
-            document.querySelector('#DataTablelist').innerHTML = boardListHTML;
-            document.querySelector('.strTotalCnt').innerHTML = boardList.length;
+            _param.pageNumber	= pageNum
+            _param.rowSize		= _rowSize
+
+            getBoardList(_param).then((response) => {
+                drawBoardList(response.boardList, pageNum);
+            })
+        }
+
+        function drawBoardList(boardList, pageNum) {
+            let boardListHtml = getBoardListHtml(boardList);
+            document.querySelector('#DataTablelist').innerHTML = boardListHtml;
+            document.querySelector('.strTotalCnt').innerHTML = totalCount;
+
+            o2web.common.CmmnEvent.DrawPageNum(_rowSize, pageNum, totalCount, drawList); // 페이징 출력
 
             addEvent();
         }
 
+        function getBoardListHtml(boardList) {
+
+            return boardList.map((v, i) => {
+
+                let {boardId, boardTitle, registrationUser, registrationDate, viewCount} = v;
+
+                return `<tr id=${boardId}>
+                    <td>
+                        <input type="checkbox" name="ckbrdVal" title="선택" id=${'chk' + boardId}>
+                        <label for=${'chk' + boardId}></label>
+                    </td>
+                    <td>${i + 1}</td>
+                    <td id="title">${boardTitle}</td>
+                    <td id="usr">${registrationUser}</td>
+                    <td id="regdt">${registrationDate}</td>
+                    <td id="cnt">${viewCount}</td>
+                    <td>
+                    <button type="button" class="btn btnSysCdEdit" id="edit">편집</button>
+                    </td>
+               </tr>`
+            }).join('');
+        }
+
         //전송할때 form데이터 or JSON? 정해진거 따르기?
-        async function getBoardList(selectedBoardType, searchType, searchValue) {
+        async function getBoardList(searchOption) {
 
             let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/getBoardList';
+
+            //구조분해할당 써보기
+            let {boardType, searchType, searchValue, pageNumber, rowSize} = searchOption;
 
             //조회는 무조건 get?
             let param = {
@@ -35,83 +82,90 @@
                     'Content-Type': 'application/json;charset=utf-8'
                 },
                 body: JSON.stringify({
-                    boardType : selectedBoardType,
+                    boardType : boardType,
                     searchType : searchType,
                     searchValue : searchValue,
+                    pageNumber : pageNumber,
+                    rowSize : rowSize,
                 })
             }
 
             let responseData = await fetch(requestURL, param).then((response) => response.json());
-            return responseData.boardList;
-        }
 
-        function getBoardListHTML(boardList) {
+            totalCount = responseData.listTotalCount;
 
-            //필요한 값만 담은 객체를 따로 생성하는 방법 생각
-            return boardList.map((v, i) => {
-
-               return `<tr id=${v['boardId']}>
-                    <td>
-                        <input type="checkbox" name="ckbrdVal" title="선택" id=${'chk' + v['boardId']}>
-                        <label for=${'chk' + v['boardId']}></label>
-                    </td>
-                    <td>${i + 1}</td>
-                    <td id="title">${v['boardTitle']}</td>
-                    <td id="usr">${v['registrationUser']}</td>
-                    <td id="regdt">${v['registrationDate']}</td>
-                    <td id="cnt">${v['viewCount']}</td>
-                    <td>
-                    <button type="button" class="btn btnSysCdEdit" id="edit">편집</button>
-                    </td>
-               </tr>`
-            }).join('');
-
+            return responseData;
         }
 
         function initEvent() {
 
-            //클릭시 게시글 추가 팝업
-            document.querySelector("#add").addEventListener("click", () => {
+            $DLG_UI.find("#add").off("click").on("click", () => {
                 o2web.system.board.BrdAdd(selectedBoardType);
             });
 
-            //클릭시 검색조건에 따라 리스트출력
-            document.querySelector('.btnGrpCdSearch').addEventListener('click', () => {
+            $DLG_UI.find(".btnGrpCdSearch").off("click").on("click", () => {
                 setSearchParam();
-                renderBoardList(selectedBoardType, searchType, searchValue);
-            })
+                drawList();
+            });
 
-            //엔터
-            document.querySelector('#SEARCH_VAL').addEventListener('keydown', (event) => {
-                if(event.keyCode == 13){
+            $DLG_UI.find("#SEARCH_VAL").off("keyup").keyup((event) => {
+                if(event.keyCode === 13){
                     setSearchParam();
-                    renderBoardList(selectedBoardType, searchType, searchValue);
+                    drawList();
                 }
-            })
+            });
 
-            // 클릭시 리스트 초기화
-            document.querySelector('.btnGrpCdReset').addEventListener('click', () => {
+            $DLG_UI.find(".btnGrpCdReset").off("click").on("click", () => {
                 initKeywordOptionParam();
-                renderBoardList(selectedBoardType, searchType, searchValue);
+                drawList();
             })
 
         }
 
         function addEvent() {
 
-            // // 클릭시 편집팝업
-            // document.querySelector('.btnSysCdEdit').addEventListener('click', () => {
-            //     o2web.system.board.BrdDetail(selectedBoardType, $(this).closest("tr").prop("id"))
-            // })
+            // 클릭시 편집팝업
+            //화살표함수 사용시 가르키는 this가 달라짐?
+            $DLG_UI.find(".btnSysCdEdit").off("click").on("click", function () {
+                let boardId = $(this).closest("tr").prop("id");
 
-            $DLG_UI.find(".btnSysCdEdit").off("click").on("click",function(){
-                o2web.system.board.BrdDetail(selectedBoardType, $(this).closest("tr").prop("id"));
+                plusViewCount(boardId).then(() => o2web.system.board.BrdDetail(selectedBoardType, boardId));
             });
+
+            // 클릭시 선택삭제
+            $DLG_UI.find(".btnGrpCdDel").off("click").on("click", () => {
+
+                let checkedIdArr = [];
+
+                $("input[name=ckbrdVal]:checked").each(function(){
+                    let boardId = $(this).closest('tr').prop("id");
+                    checkedIdArr.push(boardId);
+                })
+
+                deleteCheckedBoard(checkedIdArr).then(r => o2web.system.board.BrdMain());
+            })
+            
+            //전체 체크박스 이벤트
+            $DLG_UI.find("#ckbrdValAll").off().on("click",function(){
+                if ($DLG_UI.find("#ckbrdValAll").is(":checked")) $("input[name=ckbrdVal]").prop("checked",true);
+                else $("input[name=ckbrdVal]").prop("checked", false);
+            });
+
+            //개별 체크박스 이벤트
+            $DLG_UI.find("input[name=ckbrdVal]").off("click").on("click",function(){
+                let total = $("input[name=ckbrdVal]").length;
+                let checked = $("input[name=ckbrdVal]:checked").length;
+
+                if(total != checked) $DLG_UI.find("#ckbrdValAll").prop("checked", false);
+                else $DLG_UI.find("#ckbrdValAll").prop("checked", true);
+            });
+
+
         }
 
         function setSearchParam() {
-            searchType = document.querySelector('#SEARCH_TYPE').value;
-            searchValue = document.querySelector('#SEARCH_VAL').value;
+            _param.searchType = document.querySelector('#SEARCH_TYPE').value;
+            _param.searchValue = document.querySelector('#SEARCH_VAL').value;
         }
 
         function initKeywordOptionParam() {
@@ -119,6 +173,32 @@
             document.querySelector('#SEARCH_VAL').value = null;
 
             setSearchParam();
+        }
+
+        async function deleteCheckedBoard(checkedIdArr) {
+            let requestURL = o2.config.O2Properties.CONTEXTPATH + "/system/board/delete"
+
+            let param = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({
+                    checkedIdArr: checkedIdArr,
+                })
+            }
+
+            await fetch(requestURL, param).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+            });
+        }
+
+        async function plusViewCount(boardId) {
+            let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/plusViewCount/' + boardId;
+
+            await fetch(requestURL, {method: 'POST'}).then((response) => {return response.json()})
         }
 
         initialize();

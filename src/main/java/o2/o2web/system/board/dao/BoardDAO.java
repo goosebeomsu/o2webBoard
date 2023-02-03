@@ -16,4 +16,10 @@ public interface BoardDAO {
     Board getBoardById(String boardId);
 
     Integer updateBoard(Board board);
+
+    Integer deleteBoardById(String boardId);
+
+    Integer updateViewCount(String boardId);
+
+    Integer getListTotalCount(Search search);
 }
