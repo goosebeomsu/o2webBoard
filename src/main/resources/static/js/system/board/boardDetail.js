@@ -1,15 +1,17 @@
 (function () {
     let _class = function (boardType, boardId){
         let $DLG_UI = $("#o2-dialog-01");
+        let selectedBoard = boardType;
 
-        function renderBoardEditPopup() {
+        function renderBoardEditPopup(boardType) {
 
-            let htmlURL = o2.config.O2Properties.CONTEXTPATH + '/popup/system/board/boardDetail.html';
+            const htmlURL = o2.config.O2Properties.CONTEXTPATH + '/popup/system/board/boardDetail.html';
+            const boardTitle = o2web.utils.BOARD.getTitle(boardType);
 
             o2web.utils.UIUtil.load($DLG_UI.selector, htmlURL).done(function() {
                 $DLG_UI.dialog({
 
-                    title : '공지사항',
+                    title : boardTitle,
                     modal : true,
                     width : 800,
                     resizable : false,
@@ -17,7 +19,7 @@
                         text : "취소",
                         "class" : "btn",
                         click : function() {
-                            o2web.system.board.BrdMain();
+                            o2web.system.board.BrdMain(selectedBoard);
                             $(this).dialog("close");
                         }
                     }, {
@@ -27,7 +29,7 @@
                             _$selfdig = $(this);
                             //유효성 추가예정
                             updateBoard(boardId).then(value => {
-                                o2web.system.board.BrdMain();
+                                o2web.system.board.BrdMain(selectedBoard);
                                 _$selfdig.dialog("close");
                             })
                         }
@@ -38,7 +40,7 @@
                             _$selfdig = $(this);
                             //유효성 추가예정
                             deleteBoard(boardId).then(value => {
-                                o2web.system.board.BrdMain();
+                                o2web.system.board.BrdMain(selectedBoard);
                                 _$selfdig.dialog("close");
                             })
                         }
@@ -79,7 +81,7 @@
         }
 
         async function deleteBoard(boardId) {
-            let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/delete/' + boardId
+            const requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/delete/' + boardId
 
             await fetch(requestURL, {method: 'POST'}).then((response) => {
                 if (response.ok) {
@@ -90,9 +92,9 @@
         }
 
         async function getBoardDetail(boardId) {
-            let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/' + boardId
+            const requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/' + boardId
 
-            let boardDetail = await fetch(requestURL).then((response) => {
+            const boardDetail = await fetch(requestURL).then((response) => {
                 if(response.ok){
                     return response.json();
                 }});
@@ -108,7 +110,7 @@
 
             editData();
 
-            let contentText = boardDetail.boardContent == null ? '' : boardDetail.boardContent;
+            const contentText = boardDetail.boardContent == null ? '' : boardDetail.boardContent;
             tinymce.get("detail_cont").off().on('init',function(){
                 this.setContent(contentText);
                 return false;
@@ -139,7 +141,7 @@
             });
         }
 
-        renderBoardEditPopup();
+        renderBoardEditPopup(selectedBoard);
     }
 
     o2web.system.board = Object.assign(o2web.system.board || {}, {

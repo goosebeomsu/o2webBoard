@@ -1,6 +1,5 @@
 package o2.o2web.system.board.controller;
 
-import com.azul.tooling.in.Model;
 import o2.o2web.dto.Board;
 import o2.o2web.dto.DeleteBoardReq;
 import o2.o2web.dto.Message;
@@ -11,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
@@ -38,24 +39,35 @@ public class BoardController {
 
     @PostMapping("/add")
     @ResponseBody
-    public ResponseEntity<Message> addBoard(@RequestBody Board board, HttpServletRequest request) {
+    public Map addBoard(@ModelAttribute Board board, HttpServletRequest request) {
 
-        String userId = (String) request.getSession().getAttribute("USER_ID");
-        String boardId = UUID.randomUUID().toString();
+        Map<String, Object> resultMap = new HashMap<>();
 
-        board.setRegistrationUser(userId);
-        board.setBoardId(boardId);
+        try {
+            String userId = (String) request.getSession().getAttribute("USER_ID");
+            String boardId = UUID.randomUUID().toString();
 
-        Integer rs = boardService.addBoard(board);
+            board.setRegistrationUser(userId);
+            board.setBoardId(boardId);
 
-        if (rs == null) {
-            return new ResponseEntity<>(new Message("게시글 등록에 실패하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+            Integer rs = boardService.addBoard(board);
+
+            if(rs == null) {
+                resultMap.put("SUCCESS", false);
+            }
+
+            resultMap.put("SUCCESS", true);
+            resultMap.put("boardId", boardId);
+
+
+        } catch (Throwable t) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "게시글 등록에 실패하였습니다.");
         }
 
-        return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+        return resultMap;
     }
 
-    //조회는 무조건 get? 검색조건등이 많을때
     @PostMapping("/getBoardList")
     @ResponseBody
     public Map getBoardList(@RequestBody Search search) {
@@ -126,5 +138,12 @@ public class BoardController {
         }
 
         return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/uploadFiles")
+    @ResponseBody
+    public Map uploadFiles(MultipartHttpServletRequest request) {
+
+        return null;
     }
 }

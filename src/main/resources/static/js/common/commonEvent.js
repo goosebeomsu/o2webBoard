@@ -23,7 +23,6 @@
                 pageCountOfGroup : 5
             }
 
-            debugger;
             o2web.utils.PageRenderer.rendererPageInfo(param, callback);
         },
 

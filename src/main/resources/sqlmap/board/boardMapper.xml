@@ -21,13 +21,15 @@
         <result property="viewCount" column="VIEW_CNT" jdbcType="INTEGER"/>
         <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
+        <result property="boardType" column="BRD_TYPE" jdbcType="VARCHAR"/>
+
     </resultMap>
 
     <select id="getBoardResList" parameterType="search" resultMap="boardListResSelectMap">
         SELECT *
             FROM
             (SELECT ROWNUM AS RNUM, A.*
-             FROM   (SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT
+             FROM   (SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE
                 FROM CMT_BRD
                 WHERE BRD_TYPE = #{boardType}
 

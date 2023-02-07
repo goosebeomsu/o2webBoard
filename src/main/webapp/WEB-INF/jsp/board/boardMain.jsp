@@ -24,8 +24,8 @@
 
 
                         <ul class ="tabs sysMng mb15">
-                            <li class="category_tab01 On" id ="BRD001">공지사항</li>
-                            <li class="category_tab03" id ="BRD003">자료실</li>
+                            <li class="category_tab01 On" id ="NOTICE">공지사항</li>
+                            <li class="category_tab03" id ="DATA_ROOM">자료실</li>
                         </ul>
                         <div class="filter">
                             <div class="form-group sysMng">

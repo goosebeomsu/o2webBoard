@@ -10,6 +10,7 @@ let AppLibFiles = {
             "js/o2web.js",
             "js/utils/uiUtil.js",
             "js/utils/pageRenderer.js",
+            "js/utils/board.js",
             "js/common/commonEvent.js",
             "js/system/board/board.js",
             "js/system/board/boardAdd.js",

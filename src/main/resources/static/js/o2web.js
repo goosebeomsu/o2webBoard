@@ -11,4 +11,8 @@
 		board : {}
 	}
 
+	o2web.system.board.config = {
+		rowSize : 10
+	}
+
 })();

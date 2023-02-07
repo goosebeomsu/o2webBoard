@@ -11,5 +11,6 @@ public class GetBoardListRes {
     private Integer viewCount;
     private String registrationUser;
     private Date registrationDate;
+    private String boardType;
 
 }
