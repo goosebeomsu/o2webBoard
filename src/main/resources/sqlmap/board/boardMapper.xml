@@ -22,7 +22,16 @@
         <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
         <result property="boardType" column="BRD_TYPE" jdbcType="VARCHAR"/>
+    </resultMap>
 
+    <resultMap id="fileListSelectMap" type="BoardFile">
+        <result property="fileId" column="FILE_ID" jdbcType="VARCHAR"/>
+        <result property="boardId" column="BRD_ID" jdbcType="VARCHAR"/>
+        <result property="fileName" column="FILE_NM_SV" jdbcType="VARCHAR"/>
+        <result property="originalFileName" column="FILE_NM" jdbcType="VARCHAR"/>
+        <result property="filePath" column="FILE_PATH" jdbcType="VARCHAR"/>
+        <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
+        <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
     </resultMap>
 
     <select id="getBoardResList" parameterType="search" resultMap="boardListResSelectMap">
@@ -92,5 +101,16 @@
         DELETE CMT_BRD
         WHERE BRD_ID = #{boardId}
     </delete>
+
+    <insert id="uploadBoardFile" parameterType="boardFile">
+        INSERT INTO CMT_BRD_FILE(FILE_ID, BRD_ID, FILE_NM, FILE_NM_SV, FILE_PATH, REG_USR, REG_DT)
+        VALUES(#{fileId}, #{boardId}, #{originalFileName}, #{fileName}, #{filePath}, #{registrationUser}, sysdate)
+    </insert>
+
+    <select id="getFileListByBoardId" parameterType="String" resultMap="fileListSelectMap">
+        SELECT *
+        FROM CMT_BRD_FILE
+        WHERE BRD_ID = #{boardId}
+    </select>
 
 </mapper>

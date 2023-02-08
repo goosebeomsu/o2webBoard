@@ -5,16 +5,17 @@ import o2.o2web.dto.DeleteBoardReq;
 import o2.o2web.dto.Message;
 import o2.o2web.dto.Search;
 import o2.o2web.system.board.service.BoardService;
+import o2.o2web.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +26,12 @@ import java.util.UUID;
 public class BoardController {
 
     private final BoardService boardService;
+    private final FileUtil fileUtil;
 
     @Autowired
-    public BoardController(BoardService boardService) {
+    public BoardController(BoardService boardService, FileUtil fileUtil) {
         this.boardService = boardService;
+        this.fileUtil = fileUtil;
     }
 
     @GetMapping
@@ -86,9 +89,21 @@ public class BoardController {
 
     @GetMapping("/{boardId}")
     @ResponseBody
-    public ResponseEntity<Board> getBoard(@PathVariable String boardId) throws SQLException {
+    public Map getBoard(@PathVariable String boardId)  {
+        Map<String, Object> resultMap = new HashMap<>();
 
-        return new ResponseEntity<>(boardService.getBoard(boardId), HttpStatus.OK);
+        try {
+            Board board = boardService.getBoard(boardId);
+            List files = boardService.getFileList(boardId);
+
+            resultMap.put("SUCCESS", true);
+            resultMap.put("board", board);
+            resultMap.put("files", files);
+        } catch (Throwable t) {
+            resultMap.put("SUCCESS", false);
+        }
+
+        return resultMap;
     }
 
     @PostMapping("/update/{boardId}")
@@ -142,8 +157,33 @@ public class BoardController {
 
     @PostMapping("/uploadFiles")
     @ResponseBody
-    public Map uploadFiles(MultipartHttpServletRequest request) {
+    public Map uploadFiles(@RequestParam List<MultipartFile> uploadFile, @RequestParam String boardId, HttpSession session) {
 
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            String userId = (String) session.getAttribute("USER_ID");
+            Boolean isSuccess = fileUtil.uploadFiles(uploadFile, boardId, userId);
+
+            if(!isSuccess) {
+                resultMap.put("SUCCESS", false);
+            }
+
+            resultMap.put("SUCCESS", true);
+
+        } catch (Throwable t) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "파일 업로드에 실패하였습니다");
+        }
+
+        return resultMap;
+    }
+
+    @PostMapping
+    @ResponseBody
+    public Map downLoadFile(@RequestParam String fileName) {
+        Resource resource = fileUtil.getFileResource(fileName);
         return null;
+
     }
 }

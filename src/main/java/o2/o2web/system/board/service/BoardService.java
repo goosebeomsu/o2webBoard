@@ -3,8 +3,10 @@ package o2.o2web.system.board.service;
 import o2.o2web.dto.Board;
 import o2.o2web.dto.Search;
 import o2.o2web.system.board.dao.BoardDAO;
+import o2.o2web.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -81,5 +83,9 @@ public class BoardService {
 
     public Integer getListTotalCount(Search search) {
         return boardDAO.getListTotalCount(search);
+    }
+
+    public List getFileList(String boardId) {
+        return boardDAO.getFileListByBoardId(boardId);
     }
 }

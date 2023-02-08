@@ -2,7 +2,6 @@ package o2.o2web.dto;
 
 import lombok.Data;
 
-import java.sql.Blob;
 import java.sql.Date;
 
 

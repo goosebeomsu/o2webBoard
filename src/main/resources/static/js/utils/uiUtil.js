@@ -14,6 +14,16 @@
 
             return deferred.promise();
         },
+
+        drawFileTransfer : function () {
+            const html = `<tr>
+                            <th>파일첨부<input type="button" class ="addinputFile" id="addinputFile" value="추가"></th>
+                            <td id="file" colspan="3"></td>
+                            </tr>`
+
+            const $html = $(html);
+            $(".brdpop").find("tbody").append($html);
+        },
     }
 
     o2web.utils = Object.assign(o2web.utils || {}, {

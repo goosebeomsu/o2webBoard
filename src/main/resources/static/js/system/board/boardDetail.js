@@ -3,10 +3,13 @@
         let $DLG_UI = $("#o2-dialog-01");
         let selectedBoard = boardType;
 
-        function renderBoardEditPopup(boardType) {
+        const BOARD = o2web.utils.BOARD;
+        const boardTitle = BOARD.getTitle(boardType);
+        const containFile = BOARD.hasFile(boardType);
 
+
+        function renderBoardEditPopup() {
             const htmlURL = o2.config.O2Properties.CONTEXTPATH + '/popup/system/board/boardDetail.html';
-            const boardTitle = o2web.utils.BOARD.getTitle(boardType);
 
             o2web.utils.UIUtil.load($DLG_UI.selector, htmlURL).done(function() {
                 $DLG_UI.dialog({
@@ -46,8 +49,12 @@
                         }
                     }],
                     open : function () {
-                        //데이터 넣고 그 다음 에딧데이터
-                        getBoardDetail(boardId).then(boardDetail => drawBoardDetail(boardDetail));
+                        getBoardDetail(boardId).then(result => {
+                            if(containFile) {
+                               o2web.utils.UIUtil.drawFileTransfer();
+                               drawFileList(result.files);
+                            }
+                            drawBoardDetail(result.board)});
                     },
                     close : function(){
                         tinymce.execCommand("mceRemoveEditor", false, "detail_cont");
@@ -94,12 +101,12 @@
         async function getBoardDetail(boardId) {
             const requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/' + boardId
 
-            const boardDetail = await fetch(requestURL).then((response) => {
+            const result = await fetch(requestURL).then((response) => {
                 if(response.ok){
                     return response.json();
                 }});
 
-            return boardDetail;
+            return result;
         }
 
         function drawBoardDetail(boardDetail) {
@@ -115,6 +122,40 @@
                 this.setContent(contentText);
                 return false;
             });
+        }
+
+        function drawFileList(fileList) {
+
+            for(let i=0; i<fileList.length; i++) {
+                const html = `<div class="h23pop" id=${fileList[i].fileId}>
+                            <input title ="첨부파일" id= "fileNmbox" class="fileNamebox" value=${fileList[i].originalFileName} readonly >
+                            <input type="hidden" class="fileSvNm" value=${fileList[i].fileName}/>
+                            <input type="button" class="addinputFile" id="removeFile" value="x">
+                            <i class="fileDownbtn" ></i>
+                        </div>`;
+
+                $DLG_UI.find("#file").append(html);
+
+                $(".fileDownbtn").off('click').on('click',function(){
+                    downLoadFile(this);
+                });
+
+            }
+
+        }
+
+        function downLoadFile(el) {
+            const originalFileName = $(el).siblings("#fileNmbox").val();
+            const fileName =  $(el).siblings(".fileSvNm").val();
+
+            let formData = new FormData();
+            formData.append("fileName", fileName);
+
+            const requestURL = o2.config.O2Properties.CONTEXTPATH + "/system/board/download" + fileName;
+
+
+            debugger;
+
         }
 
         function getBoardParam() {

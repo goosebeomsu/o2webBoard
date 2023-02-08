@@ -44,7 +44,6 @@
             addEvent();
         }
 
-        // 외부변수 참조하는게 안좋다고 들었는데 rowSize같은 상수도 파라미터로 넣어주는게 좋을까?
         function getBoardListHtml(boardList, totalCount, currentPage) {
 
             return boardList.map((v, i) => {

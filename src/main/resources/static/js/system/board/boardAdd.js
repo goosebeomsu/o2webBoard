@@ -7,7 +7,6 @@
         let _fileInputNum = 0;
 
         const BOARD = o2web.utils.BOARD;
-
         const boardTitle = BOARD.getTitle(boardType);
         const containFile = BOARD.hasFile(boardType);
 
@@ -42,7 +41,7 @@
                     }],
                     open : function (){
                         if(containFile) {
-                            drawFileTransfer();
+                            o2web.utils.UIUtil.drawFileTransfer()
                         }
                         editData();
                         addEvent();
@@ -85,7 +84,7 @@
                 if (result.SUCCESS) {
                     if(containFile){
                         uploadFile(result.boardId).done(function(result){
-                            if(result == "sucess"){
+                            if(result == "success"){
                                 deferred.resolve(result.boardId);
                             }
                         });
@@ -98,16 +97,6 @@
             });
 
             return deferred.promise();
-        }
-
-        function drawFileTransfer() {
-            const html = `<tr>
-                            <th>파일첨부<input type="button" class ="addinputFile" id="addinputFile" value="추가"></th>
-                            <td id="file"></td>
-                            </tr>`
-
-            const $html = $(html);
-            $(".brdpop").find("tbody").append($html);
         }
 
         function addEvent() {
@@ -145,35 +134,25 @@
 
             let formData = new FormData();
             let inputFile = $(".inputfile");
-            let refreshFileName = [];
 
             inputFile.each(function (e,item){
                 //파일 없으면 패스
                 if(item.files.length > 0){
-                    refreshFileName.push( $(item).siblings(".fileNamebox").val() );//중복검토된 파일 이름 등록
                     formData.append("uploadFile",item.files[0]); //해당 파일 추가
                 }
             });
 
-            formData.append("refreshFileName", JSON.stringify(refreshFileName));
             formData.append("boardId", boardId);
 
             o2.utils.Http.requestMultipart("/system/board/uploadFiles", formData).done(function (result) {
                 if (result.SUCCESS) {
-                    deferred.resolve("sucess");
-
+                    deferred.resolve("success");
                 } else {
                     deferred.reject("fail");
                 }
             });
-
-            debugger;
-
-            //return deferred.promise();
-
+            return deferred.promise();
         }
-
-
 
         renderBoardAddPopup(selectedBoard);
     }
