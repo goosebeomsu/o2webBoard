@@ -27,4 +27,7 @@ public interface BoardDAO {
     Integer uploadBoardFile(BoardFile boardFile);
 
     List getFileListByBoardId(String boardId);
+
+    Integer deleteFileById(String fileId);
+
 }

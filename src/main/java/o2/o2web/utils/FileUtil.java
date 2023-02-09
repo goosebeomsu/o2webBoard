@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +23,10 @@ public class FileUtil {
 
     @Value("${file.path}")
     private String filePath;
-
     @Autowired
     private BoardDAO boardDAO;
+    @Autowired
+    ResourceLoader resourceLoader;
 
 
     public boolean uploadFiles(List<MultipartFile> uploadFiles, String boardId, String userId) {
@@ -52,6 +54,26 @@ public class FileUtil {
         }
 
         return true;
+    }
+
+    public boolean deleteFiles(List<String> fileIdList) {
+
+        Integer totalCount = 0;
+
+        for (String fileId : fileIdList) {
+            Integer rs = boardDAO.deleteFileById(fileId);
+            totalCount += rs;
+        }
+
+        if (totalCount == fileIdList.size()) {
+            deleteFileInPath(fileIdList);
+        }
+        return true;
+    }
+
+    private void deleteFileInPath(List<String> fileIdList) {
+
+
     }
 
     private BoardFile createBoardFile(String boardId, String originalFilename, String filePath, String userId) {
@@ -84,7 +106,9 @@ public class FileUtil {
         return originalFileName.replace(" ", "_");
     }
 
-    public Resource getFileResource(String fileName) {
-        return null;
+    public Resource getFileResource(String fileName) throws IOException {
+        Path path = Paths.get(filePath + fileName);
+        return new InputStreamResource(Files.newInputStream(path));
     }
+
 }

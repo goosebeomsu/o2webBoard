@@ -3,7 +3,8 @@ let AppLibFiles = {
     JS: {
         Ref: [
             "lib/o2map/o2map.src.js",
-            "lib/tinymce/tinymce.min.js"
+            "lib/tinymce/tinymce.min.js",
+            "lib/download/download.js"
         ],
 
         Core: [

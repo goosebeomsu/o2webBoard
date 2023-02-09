@@ -75,18 +75,16 @@
             let deferred = $.Deferred();
 
             const param = {
-                boardTitle : $("#Title").val(),
-                boardContent : tinymce.get("detail_cont").getContent(),
-                boardType : selectedBoard,
+                boardTitle: $("#Title").val(),
+                boardContent: tinymce.get("detail_cont").getContent(),
+                boardType: selectedBoard,
             }
 
-            o2.utils.Http.requestData('/system/board/add', param).done(function(result) {
+            o2.utils.Http.requestData('/system/board/add', param).done(function (result) {
                 if (result.SUCCESS) {
-                    if(containFile){
-                        uploadFile(result.boardId).done(function(result){
-                            if(result == "success"){
-                                deferred.resolve(result.boardId);
-                            }
+                    if (containFile) {
+                        uploadFile(result.boardId).done(function (result) {
+                            deferred.resolve("success");
                         });
                     } else {
                         deferred.resolve(result.boardId);
@@ -102,10 +100,10 @@
         function addEvent() {
             $DLG_UI.find("#addinputFile").off("click").on("click",function(){
                 let i = _fileInputNum++;
-                let html = `<div class="h23pop newFile" > 
-                            <input class="fileNamebox"  readonly > 
+                let html = `<div class="h23pop newFile" >
+                            <input class="fileNamebox"  readonly >
                             <input type="button" class="addinputFile" id="removeFile" value="x">
-                             <label for=${"brdFile" + i}> <i class="searchfile"></i> 
+                             <label for=${"brdFile" + i}> <i class="searchfile"></i>
                              </label>
                              <input type="file" class="inputfile" id=${"brdFile" + i}>
                             </div>`

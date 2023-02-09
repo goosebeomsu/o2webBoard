@@ -5,6 +5,8 @@ import o2.o2web.login.dao.LoginDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+
 @Service
 public class LoginService {
 
@@ -24,4 +26,9 @@ public class LoginService {
 
         return null;
     }
+
+    public String getSessionId(HttpSession session) {
+        return (String) session.getAttribute("USER_ID");
+    }
+
 }

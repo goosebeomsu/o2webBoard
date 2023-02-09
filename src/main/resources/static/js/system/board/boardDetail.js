@@ -2,6 +2,9 @@
     let _class = function (boardType, boardId){
         let $DLG_UI = $("#o2-dialog-01");
         let selectedBoard = boardType;
+        let _fileInputNum = 0;
+        let _removeFileId=[];
+
 
         const BOARD = o2web.utils.BOARD;
         const boardTitle = BOARD.getTitle(boardType);
@@ -31,7 +34,7 @@
                         click : function () {
                             _$selfdig = $(this);
                             //유효성 추가예정
-                            updateBoard(boardId).then(value => {
+                            updateBoard(boardId).done(function(data){
                                 o2web.system.board.BrdMain(selectedBoard);
                                 _$selfdig.dialog("close");
                             })
@@ -55,6 +58,8 @@
                                drawFileList(result.files);
                             }
                             drawBoardDetail(result.board)});
+                        dynamicEvent();
+
                     },
                     close : function(){
                         tinymce.execCommand("mceRemoveEditor", false, "detail_cont");
@@ -68,20 +73,80 @@
 
         }
 
-        async function updateBoard(boardId) {
+        /*async function updateBoard(boardId) {
             let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/update/' + boardId
 
             let param = {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify(getBoardParam())
+                body: new URLSearchParams(getBoardParam())
             }
 
-            await fetch(requestURL, param).then((response) => {
-                if(response.ok){
-                    return response.json()
+            const result = await fetch(requestURL, param).then((response) => {
+                if(response.SUCCESS){
+                    debugger;
+                    if(containFile) {
+                        updateFiles(response.boardId).done(function () {
+
+                        })
+                    } else {
+                        return response.json();
+                    }
+
+                } else {
+                    return response.json;
+                }
+            });
+
+            return result;
+
+        }*/
+
+        function updateBoard(boardId) {
+            const deferred = $.Deferred();
+            const requestURL = '/system/board/update/' + boardId
+
+            o2.utils.Http.requestData(requestURL, getBoardParam()).done(function (result) {
+                if (result.SUCCESS) {
+                    if (containFile) {
+                        updateFiles(result.boardId).done(function (result) {
+                            if (result == "success") {
+                                deferred.resolve("success");
+                            }
+                        })
+                    } else {
+                        deferred.resolve("success");
+                    }
+                } else {
+                    deferred.reject('fail');
+                }
+            })
+            return deferred.promise();
+        }
+
+        function updateFiles(boardId) {
+            let deferred = $.Deferred();
+
+            let formData = new FormData();
+            let inputFile = $(".inputfile");
+
+            inputFile.each(function (e,item){
+                //파일 없으면 패스
+                if(item.files.length > 0){
+                    formData.append("uploadFile",item.files[0]); //해당 파일 추가
+                }
+            });
+
+            formData.append("boardId", boardId);
+            formData.append("fileIdArr",JSON.stringify(_removeFileId));
+
+            o2.utils.Http.requestMultipart("/system/board/updateFiles", formData).done(function (result) {
+                if (result.SUCCESS) {
+                    deferred.resolve("success");
+                } else {
+                    deferred.reject("fail");
                 }
             });
 
@@ -116,6 +181,7 @@
             $DLG_UI.find("#regDt").text(boardDetail.registrationDate);
 
             editData();
+            addEvent();
 
             const contentText = boardDetail.boardContent == null ? '' : boardDetail.boardContent;
             tinymce.get("detail_cont").off().on('init',function(){
@@ -137,25 +203,49 @@
                 $DLG_UI.find("#file").append(html);
 
                 $(".fileDownbtn").off('click').on('click',function(){
-                    downLoadFile(this);
+                    downloadFile(this);
                 });
 
             }
 
         }
 
-        function downLoadFile(el) {
-            const originalFileName = $(el).siblings("#fileNmbox").val();
-            const fileName =  $(el).siblings(".fileSvNm").val();
+        function downloadFile(el) {
 
-            let formData = new FormData();
-            formData.append("fileName", fileName);
+            try {
+                const originalFileName = $(el).siblings("#fileNmbox").val();
+                const fileName = $(el).siblings(".fileSvNm").val();
 
-            const requestURL = o2.config.O2Properties.CONTEXTPATH + "/system/board/download" + fileName;
+                let formData = new FormData();
+                formData.append("fileName", fileName); // 파일명
 
+                const requestURL = o2.config.O2Properties.CONTEXTPATH + "/system/board/download";
 
-            debugger;
+                let xhr = new XMLHttpRequest();
 
+                addListeners(xhr);
+
+                xhr.open("POST", requestURL, true);
+                xhr.responseType = "blob";
+                xhr.onload = function(e) {
+                    if (xhr.status === 200) {
+                        if (xhr.response.size === 0) {
+                            alert("파일이 존재하지 않습니다")
+                        } else {
+                            download(xhr.response, originalFileName, "application/octet-stream;charset=UTF-8");
+                        }
+                    }
+                }
+                xhr.send(formData);
+            } catch (e) {
+                alert("실패");
+            }
+
+        }
+
+        function addListeners(xhr) {
+            xhr.addEventListener('loadstart', function(){o2.utils.Http.showLoading(true);});
+            xhr.addEventListener('loadend', function(){o2.utils.Http.showLoading(false);});
         }
 
         function getBoardParam() {
@@ -180,6 +270,41 @@
                 statusbar : false,
                 forced_root_block : ''
             });
+        }
+
+        function dynamicEvent(){
+            $(document).on("click","#removeFile",function(e){
+                e.preventDefault();
+                e.stopPropagation();
+
+                const fileId = $(this).closest("div").prop("id");
+
+                _removeFileId.push(fileId);
+                $(this).closest("div").remove();
+            });
+        }
+
+        function addEvent() {
+            $DLG_UI.find("#addinputFile").off("click").on("click",function(){
+                let i = _fileInputNum++;
+                let html = `<div class="h23pop newFile" >
+                            <input id= "fileNmbox" class="fileNamebox" value="" readonly >
+                            <input type="button" class="addinputFile" id="removeFile" value="x">
+                             <label for=${"brdFile" + i}> <i class="searchfile"></i>
+                             </label>
+                             <input type="file" class="inputfile" id=${"brdFile" + i}>
+                            </div>`
+                $DLG_UI.find("#file").append(html);
+
+                //유효성검사 추가하기
+
+                $(".inputfile").off('change').on('change',function(){
+                    let fileName = $(this).val();
+                    $(this).siblings(".fileNamebox").val(BOARD.fileNameRefresh(fileName));
+                })
+
+            })
+
         }
 
         renderBoardEditPopup(selectedBoard);

@@ -24,6 +24,7 @@
             const $html = $(html);
             $(".brdpop").find("tbody").append($html);
         },
+
     }
 
     o2web.utils = Object.assign(o2web.utils || {}, {

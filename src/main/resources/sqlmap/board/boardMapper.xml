@@ -113,4 +113,10 @@
         WHERE BRD_ID = #{boardId}
     </select>
 
+    <delete id="deleteFileById" parameterType="String">
+        DELETE CMT_BRD_FILE
+        WHERE FILE_ID = #{fileId}
+    </delete>
+
+
 </mapper>

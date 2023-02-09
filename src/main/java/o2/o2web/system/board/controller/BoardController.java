@@ -4,11 +4,14 @@ import o2.o2web.dto.Board;
 import o2.o2web.dto.DeleteBoardReq;
 import o2.o2web.dto.Message;
 import o2.o2web.dto.Search;
+import o2.o2web.login.service.LoginService;
 import o2.o2web.system.board.service.BoardService;
 import o2.o2web.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +31,13 @@ public class BoardController {
 
     private final BoardService boardService;
     private final FileUtil fileUtil;
+    private final LoginService loginService;
 
     @Autowired
-    public BoardController(BoardService boardService, FileUtil fileUtil) {
+    public BoardController(BoardService boardService, FileUtil fileUtil, LoginService loginService) {
         this.boardService = boardService;
         this.fileUtil = fileUtil;
+        this.loginService = loginService;
     }
 
     @GetMapping
@@ -42,12 +48,12 @@ public class BoardController {
 
     @PostMapping("/add")
     @ResponseBody
-    public Map addBoard(@ModelAttribute Board board, HttpServletRequest request) {
+    public Map addBoard(@ModelAttribute Board board, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
         try {
-            String userId = (String) request.getSession().getAttribute("USER_ID");
+            String userId = loginService.getSessionId(session);
             String boardId = UUID.randomUUID().toString();
 
             board.setRegistrationUser(userId);
@@ -74,8 +80,6 @@ public class BoardController {
     @PostMapping("/getBoardList")
     @ResponseBody
     public Map getBoardList(@RequestBody Search search) {
-
-        System.out.println("search = " + search);
 
         List boardList = boardService.getBoardListRes(search);
         Integer listTotalCount = boardService.getListTotalCount(search);
@@ -108,14 +112,27 @@ public class BoardController {
 
     @PostMapping("/update/{boardId}")
     @ResponseBody
-    public ResponseEntity<Message> updateBoard(@RequestBody Board board) {
+    public Map updateBoard(@PathVariable String boardId, @ModelAttribute Board board) {
 
-        Integer rs = boardService.updateBoard(board);
+        Map<String, Object> resultMap = new HashMap<>();
 
-        if (rs == null) {
-            return new ResponseEntity<>(new Message("업데이트에 실패하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            Integer rs = boardService.updateBoard(board);
+
+            if(rs == null) {
+                resultMap.put("SUCCESS", false);
+            }
+
+            resultMap.put("SUCCESS", true);
+            resultMap.put("boardId", boardId);
+
+        } catch (Throwable t) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "게시글 등록에 실패하였습니다.");
         }
-        return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+
+
+        return resultMap;
     }
 
     @PostMapping("/delete/{boardId}")
@@ -157,12 +174,17 @@ public class BoardController {
 
     @PostMapping("/uploadFiles")
     @ResponseBody
-    public Map uploadFiles(@RequestParam List<MultipartFile> uploadFile, @RequestParam String boardId, HttpSession session) {
+    public Map uploadFiles(@RequestParam(required = false) List<MultipartFile> uploadFile, @RequestParam String boardId, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        if(uploadFile == null) {
+            resultMap.put("SUCCESS", true);
+            return resultMap;
+        }
+
         try {
-            String userId = (String) session.getAttribute("USER_ID");
+            String userId = loginService.getSessionId(session);
             Boolean isSuccess = fileUtil.uploadFiles(uploadFile, boardId, userId);
 
             if(!isSuccess) {
@@ -179,11 +201,43 @@ public class BoardController {
         return resultMap;
     }
 
-    @PostMapping
+    @PostMapping("/download")
     @ResponseBody
-    public Map downLoadFile(@RequestParam String fileName) {
-        Resource resource = fileUtil.getFileResource(fileName);
-        return null;
+    public ResponseEntity downLoadFile(@RequestParam String fileName) {
 
+        HttpHeaders headers = new HttpHeaders();
+
+        try {
+            Resource fileResource = fileUtil.getFileResource(fileName);
+
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+            headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+            return new ResponseEntity<>(fileResource, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("SUCCESS", false);
+            return new ResponseEntity<>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping("/updateFiles")
+    @ResponseBody
+    public Map updateFiles(@RequestParam List<MultipartFile> uploadFile,
+                           @RequestParam String boardId,
+                           @RequestParam List<String> fileIdArr,
+                           HttpSession session) {
+
+
+        try {
+            fileUtil.deleteFiles(fileIdArr);
+
+        } catch (Throwable t) {
+
+        }
+
+        return null;
     }
 }
