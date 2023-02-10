@@ -2,8 +2,10 @@ package o2.o2web.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DeleteBoardReq {
-    private String[] checkedIdArr;
+    private List<String> checkedIdList;
 
 }

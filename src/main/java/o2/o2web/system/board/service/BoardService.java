@@ -3,10 +3,8 @@ package o2.o2web.system.board.service;
 import o2.o2web.dto.Board;
 import o2.o2web.dto.Search;
 import o2.o2web.system.board.dao.BoardDAO;
-import o2.o2web.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -51,16 +49,11 @@ public class BoardService {
         return  boardDAO.deleteBoardById(boardId);
     }
 
-    public boolean deleteCheckedBoard(String[] checkedIdArr) {
-        //예외발생시 롤백인데 삭제할때 잘못된아이디들어가도 예외는아님
-        Integer totalCount = 0;
+    public boolean deleteCheckedBoards(List<String> boardIdList) {
 
-        for (String boardId : checkedIdArr) {
-            Integer deleteCount = boardDAO.deleteBoardById(boardId);
-            totalCount += deleteCount;
-        }
+        Integer rs = boardDAO.deleteBoardsByIdList(boardIdList);
 
-        if (totalCount != checkedIdArr.length) {
+        if(rs != boardIdList.size()) {
             return false;
         }
         return true;

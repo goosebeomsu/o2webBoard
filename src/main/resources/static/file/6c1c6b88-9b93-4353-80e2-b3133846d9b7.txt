@@ -1,0 +1,69 @@
+intellij 설정
+1. svn 
+
+• svn 설치
+https://www.visualsvn.com/downloads/
+Apache Subversion command line tools 다운로드
+
+• intellij svn 설정
+File - Settings - Version Control - Subversion - path 변경
+path > 다운로드한 파일에서 svn.exe 파일로 설정
+
+• svn 연결
+• 내부 - https://172.16.119.70/svn/projects
+• 외부 - https://222.99.52.196:20001/svn/projects
+VCS - Share Project(Subversion) - 추가 또는
+VCS > Browse VCS Repository > Browse Subversion Repository - 추가 또는
+초기화면 - GET GROM VCS - version control(Subversion) - 추가
+
+2. Check out
+
+• SDK, WEB, MANAGER 따로 Check out
+
+3. Project Stucture 
+
+• SDKs - JDK home path - 설정 - Project SDK 설정
+• JAVA HOME 잡혀있으면 자동으로 설정 됨, 안 되어있으면 설정
+
+4. Maven 
+
+• 오른쪽 탭 - maven - instoall 가능
+• 기본으로 깔려있음
+
+5.  Tomcat
+
+• Add Cnfiguration - Tomcat Server Local 추가
+• Application Server - 톰캣 경로 설정
+• HTTP port, JMX port - 설정 (JMX port가 달라야 WEB, MANAGER 같이 실행가능)
+• Warning - FIX - war exploded 
+• Application context - path 설정 ex)/upbss.web
+• On 'Update' action / On Frame deactivation - Updata classes and resources 설정
+• VM options - (-Dfile.encoding=UTF-8 / -Dconsole.encoding=UTF-8)
+
+6. 한글 설정 구글 검색ㄱㄱ 
+
+• Help - Edit Custom VM Option (-Dfile.encoding=UTF-8 / -Dconsole.encoding=UTF-8) 추가
+
+7. Plugins 
+
+• Rainbow Brackets - 괄호 색상 다르게
+• codeGlacnce - 코드 미니맵
+• Key Promoter X - 마우스로 누른 버튼 단축키 알려줌
+
+8. 바탕화면 바꾸기
+
+• 배경화면 이미지
+• Preferences > Appearence & Behavior > Appearance
+• Ul Options > Background Image .. > 사진 선택
+
+• 프로젝트 뷰 (왼쪽탭)
+• Settings > appearance & behavior > file colors+ > project files scope > 컬러 선택 > uncheck User in editor tabs, check Use in project view
+
+• 콘솔
+• Settings > editor > color scheme > console colorsconsole > background > 컬러 선택
+
+• 코드 메인 뷰
+• Settings > editor > color scheme > generaltext > default text > 컬러 선택
+
+
+

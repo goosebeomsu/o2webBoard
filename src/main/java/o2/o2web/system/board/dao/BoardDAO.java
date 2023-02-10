@@ -6,6 +6,7 @@ import o2.o2web.dto.Search;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BoardDAO {
@@ -20,6 +21,8 @@ public interface BoardDAO {
 
     Integer deleteBoardById(String boardId);
 
+    Integer deleteBoardsByIdList(List<String> boardIdList);
+
     Integer updateViewCount(String boardId);
 
     Integer getListTotalCount(Search search);
@@ -28,6 +31,9 @@ public interface BoardDAO {
 
     List getFileListByBoardId(String boardId);
 
-    Integer deleteFileById(String fileId);
+    Integer deleteFilesByIds(List<String> fileIds);
 
+    List getFileNamesByIds(List<String> fileIds);
+
+    List getFileIdsByBoardId(String boardId);
 }

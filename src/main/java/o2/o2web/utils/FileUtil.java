@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -37,13 +39,13 @@ public class FileUtil {
             BoardFile boardFile = createBoardFile(boardId, originalFilename, filePath, userId);
             Integer rs = boardDAO.uploadBoardFile(boardFile);
 
+            //롤백관련해서 고려해보기
             if(rs == null) {
                 return false;
             }
 
             try {
                 File file = new File(filePath, boardFile.getFileName());
-                //transferFile(file, uploadFile.getBytes());
                 uploadFile.transferTo(file);
 
             } catch (IOException e) {
@@ -56,25 +58,44 @@ public class FileUtil {
         return true;
     }
 
-    public boolean deleteFiles(List<String> fileIdList) {
+    public boolean deleteFiles(List<String> fileIds) {
 
-        Integer totalCount = 0;
+        try {
+            List<String> fileNames = boardDAO.getFileNamesByIds(fileIds);
 
-        for (String fileId : fileIdList) {
-            Integer rs = boardDAO.deleteFileById(fileId);
-            totalCount += rs;
+            Integer rs = boardDAO.deleteFilesByIds(fileIds);
+            //롤백도 적용해보자
+            if (rs != fileIds.size()) {
+                return false;
+            }
+
+            boolean isSuccess = deleteFilesInPath(fileNames);
+
+            if(!isSuccess) {
+                return false;
+            }
+
+            return true;
+
+        } catch (Throwable t) {
+            return false;
         }
 
-        if (totalCount == fileIdList.size()) {
-            deleteFileInPath(fileIdList);
+    }
+
+    private boolean deleteFilesInPath(List<String> fileNames) {
+
+        for (String fileName : fileNames) {
+            File file = new File(filePath, fileName);
+            boolean isSuccess = file.delete();
+
+            if(!isSuccess) {
+                return false;
+            }
         }
         return true;
     }
 
-    private void deleteFileInPath(List<String> fileIdList) {
-
-
-    }
 
     private BoardFile createBoardFile(String boardId, String originalFilename, String filePath, String userId) {
         BoardFile boardFile = new BoardFile();
@@ -111,4 +132,7 @@ public class FileUtil {
         return new InputStreamResource(Files.newInputStream(path));
     }
 
+    public List<String> getFileIds(String boardId) {
+        return boardDAO.getFileIdsByBoardId(boardId);
+    }
 }

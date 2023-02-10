@@ -97,9 +97,17 @@
         WHERE BRD_ID = #{boardId}
     </update>
 
-    <delete id="deleteBoardById" parameterType="String">
+    <delete id="deleteBoardById" parameterType="List">
         DELETE CMT_BRD
-        WHERE BRD_ID = #{boardId}
+        WHERE BRD_ID IN #{boardId}
+    </delete>
+
+    <delete id="deleteBoardsByIdList">
+        DELETE CMT_BRD
+        WHERE BRD_ID IN
+        <foreach item="boardId" collection="list" open="(" close=")" separator=",">
+            #{boardId}
+        </foreach>
     </delete>
 
     <insert id="uploadBoardFile" parameterType="boardFile">
@@ -118,5 +126,27 @@
         WHERE FILE_ID = #{fileId}
     </delete>
 
+    <delete id="deleteFilesByIds">
+        DELETE CMT_BRD_FILE
+        WHERE FILE_ID IN
+        <foreach item="fileId" collection="list" open="(" close=")" separator=",">
+            #{fileId}
+        </foreach>
+    </delete>
+
+    <select id="getFileNamesByIds" resultType="string">
+        SELECT FILE_NM_SV
+        FROM CMT_BRD_FILE
+        WHERE FILE_ID IN
+        <foreach item="fileId" collection="list" open="(" close=")" separator=",">
+            #{fileId}
+        </foreach>
+    </select>
+
+    <select id="getFileIdsByBoardId" parameterType="string" resultType="string">
+        SELECT FILE_ID
+        FROM CMT_BRD_FILE
+        WHERE BRD_ID LIKE #{boardId}
+    </select>
 
 </mapper>

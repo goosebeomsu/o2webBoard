@@ -73,37 +73,6 @@
 
         }
 
-        /*async function updateBoard(boardId) {
-            let requestURL = o2.config.O2Properties.CONTEXTPATH + '/system/board/update/' + boardId
-
-            let param = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams(getBoardParam())
-            }
-
-            const result = await fetch(requestURL, param).then((response) => {
-                if(response.SUCCESS){
-                    debugger;
-                    if(containFile) {
-                        updateFiles(response.boardId).done(function () {
-
-                        })
-                    } else {
-                        return response.json();
-                    }
-
-                } else {
-                    return response.json;
-                }
-            });
-
-            return result;
-
-        }*/
-
         function updateBoard(boardId) {
             const deferred = $.Deferred();
             const requestURL = '/system/board/update/' + boardId
@@ -140,7 +109,7 @@
             });
 
             formData.append("boardId", boardId);
-            formData.append("fileIdArr",JSON.stringify(_removeFileId));
+            formData.append("fileIds", _removeFileId);
 
             o2.utils.Http.requestMultipart("/system/board/updateFiles", formData).done(function (result) {
                 if (result.SUCCESS) {
@@ -149,6 +118,8 @@
                     deferred.reject("fail");
                 }
             });
+
+            return deferred.promise();
 
         }
 

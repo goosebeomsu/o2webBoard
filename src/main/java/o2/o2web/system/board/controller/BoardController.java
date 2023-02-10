@@ -140,6 +140,11 @@ public class BoardController {
     public ResponseEntity<Message> deleteBoard(@PathVariable String boardId) {
 
         Integer rs = boardService.deleteBoard(boardId);
+        List<String> fileIds = fileUtil.getFileIds(boardId);
+
+        if (fileIds.size() > 0) {
+            fileUtil.deleteFiles(fileIds);
+        }
 
         if (rs == null) {
             return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -149,9 +154,19 @@ public class BoardController {
 
     @PostMapping("/delete")
     @ResponseBody
-    public ResponseEntity<Message> deleteCheckedBoard(@RequestBody DeleteBoardReq deleteBoardReq) {
+    public ResponseEntity<Message> deleteCheckedBoards(@RequestBody DeleteBoardReq deleteBoardReq) {
 
-        boolean isSuccess = boardService.deleteCheckedBoard(deleteBoardReq.getCheckedIdArr());
+        List<String> checkedIds = deleteBoardReq.getCheckedIdList();
+
+        boolean isSuccess = boardService.deleteCheckedBoards(checkedIds);
+
+        for (String checkedId : checkedIds) {
+            List<String> fileIds = fileUtil.getFileIds(checkedId);
+
+            if (fileIds.size() > 0) {
+                fileUtil.deleteFiles(fileIds);
+            }
+        }
 
         if (isSuccess) {
             return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
@@ -225,19 +240,34 @@ public class BoardController {
 
     @PostMapping("/updateFiles")
     @ResponseBody
-    public Map updateFiles(@RequestParam List<MultipartFile> uploadFile,
+    public Map updateFiles(@RequestParam(required = false) List<MultipartFile> uploadFile,
                            @RequestParam String boardId,
-                           @RequestParam List<String> fileIdArr,
+                           @RequestParam(required = false) List<String> fileIds,
                            HttpSession session) {
 
+        Map<String, Object> resultMap = new HashMap<>();
 
-        try {
-            fileUtil.deleteFiles(fileIdArr);
-
-        } catch (Throwable t) {
-
+        if(uploadFile == null && fileIds.size() == 0) {
+            resultMap.put("SUCCESS", true);
+            return resultMap;
         }
 
-        return null;
+        try {
+            String userId = loginService.getSessionId(session);
+
+            if(fileIds.size() > 0) {
+                fileUtil.deleteFiles(fileIds);
+            }
+
+            fileUtil.uploadFiles(uploadFile, boardId, userId);
+
+            resultMap.put("SUCCESS", true);
+
+        } catch (Throwable t) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "파일 수정에 실패하였습니다.");
+        }
+
+        return resultMap;
     }
 }
