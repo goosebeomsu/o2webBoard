@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,9 +40,9 @@ public class BoardController {
     }
 
     @GetMapping
-    public String getBoardMain() {
+    public String boardMain() {
 
-        return "board/boardMain";
+        return "system/board/boardMain";
     }
 
     @PostMapping("/add")
@@ -98,7 +97,7 @@ public class BoardController {
 
         try {
             Board board = boardService.getBoard(boardId);
-            List files = boardService.getFileList(boardId);
+            List files = fileUtil.getFileList(boardId);
 
             resultMap.put("SUCCESS", true);
             resultMap.put("board", board);
@@ -259,7 +258,9 @@ public class BoardController {
                 fileUtil.deleteFiles(fileIds);
             }
 
-            fileUtil.uploadFiles(uploadFile, boardId, userId);
+            if(uploadFile != null) {
+                fileUtil.uploadFiles(uploadFile, boardId, userId);
+            }
 
             resultMap.put("SUCCESS", true);
 
@@ -270,4 +271,5 @@ public class BoardController {
 
         return resultMap;
     }
+
 }

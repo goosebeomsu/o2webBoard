@@ -18,8 +18,8 @@
     <div class="gnb">
         <div class="inner">
             <ul>
-                <li class="topMenu1"><a href="${CONTEXTPATH}/board">시스템 관리</a></li>
-                <li class="topMenu2"><a href="${CONTEXTPATH}/mngr/data">데이터 관리</a></li>
+                <li class="topMenu1"><a href="${CONTEXTPATH}/system/board">시스템 관리</a></li>
+                <li class="topMenu2"><a href="${CONTEXTPATH}/data/groupCode">데이터 관리</a></li>
                 <li class="topMenu3"><a href="${CONTEXTPATH}/mngr/sink">데이터 조회</a></li>
             </ul>
         </div>

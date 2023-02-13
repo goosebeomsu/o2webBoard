@@ -78,7 +78,4 @@ public class BoardService {
         return boardDAO.getListTotalCount(search);
     }
 
-    public List getFileList(String boardId) {
-        return boardDAO.getFileListByBoardId(boardId);
-    }
 }

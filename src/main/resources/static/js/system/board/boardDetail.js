@@ -6,7 +6,7 @@
         let _removeFileId=[];
 
 
-        const BOARD = o2web.utils.BOARD;
+        const BOARD = o2web.system.board.CmmnEvent;
         const boardTitle = BOARD.getTitle(boardType);
         const containFile = BOARD.hasFile(boardType);
 

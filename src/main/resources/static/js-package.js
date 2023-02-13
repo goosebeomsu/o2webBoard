@@ -9,13 +9,17 @@ let AppLibFiles = {
 
         Core: [
             "js/o2web.js",
+            "js/common/commonEvent.js",
+
             "js/utils/uiUtil.js",
             "js/utils/pageRenderer.js",
-            "js/utils/board.js",
-            "js/common/commonEvent.js",
+
+            "js/system/board/boardCommon.js",
             "js/system/board/board.js",
             "js/system/board/boardAdd.js",
-            "js/system/board/boardDetail.js"
+            "js/system/board/boardDetail.js",
+
+            "js/data/groupcode/groupCodeCommon.js",
         ]
     },
 

@@ -4,6 +4,7 @@
 	window.o2web = {
 		common : {},
 		system : {},
+		data : {},
 		utils : {},
 	}
 
@@ -11,7 +12,11 @@
 		board : {}
 	}
 
-	o2web.system.board.config = {
+	o2web.system.config = {
+		rowSize : 10
+	}
+
+	o2web.data.config = {
 		rowSize : 10
 	}
 

@@ -12,5 +12,6 @@ public class GetBoardListRes {
     private String registrationUser;
     private Date registrationDate;
     private String boardType;
+    private String boardIdHasFile;
 
 }

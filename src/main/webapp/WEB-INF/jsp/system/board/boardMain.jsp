@@ -6,15 +6,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>boardMain</title>
-    <%@ include file="../include/header_inc.jsp"%>
+    <%@ include file="../../include/header_inc.jsp"%>
 </head>
 <body>
 <div id="wrap">
-    <%@include file="../include/menu_inc_gnb.jsp" %>
+    <%@include file="../../include/menu_inc_gnb.jsp" %>
         <div id="container">
             <div class="inner">
                 <%-- 사이드바 설정 --%>
-                <%@include file="../include/menu_inc_side.jsp" %>
+                <%@include file="../../include/menu_inc_side.jsp" %>
 
                 <div class="content-body">
                     <div class="title">
@@ -96,7 +96,7 @@
                 </div>
                 <!--//본문 content-body-->
             </div>
-            <%@include file="../include/footer_inc.jsp" %>
+            <%@include file="../../include/footer_inc.jsp" %>
 
 </div>
 </body>

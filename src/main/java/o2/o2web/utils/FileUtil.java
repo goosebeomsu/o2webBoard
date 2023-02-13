@@ -135,4 +135,12 @@ public class FileUtil {
     public List<String> getFileIds(String boardId) {
         return boardDAO.getFileIdsByBoardId(boardId);
     }
+
+    public List getFileList(String boardId) {
+        return boardDAO.getFileListByBoardId(boardId);
+    }
+
+
+
+
 }

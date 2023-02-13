@@ -1,7 +1,7 @@
 (function (){
     let _class = function (boardType = 'NOTICE'){
 
-        const _rowSize = o2web.system.board.config.rowSize;
+        const _rowSize = o2web.system.config.rowSize;
 
         let $DLG_UI = $("#sysBrdMng_page");
         let selectedBoardType = boardType;
@@ -21,7 +21,6 @@
             drawList()
         }
 
-        //외부변수 참조안하게 바꿔보자. 일단은 갈길이 바빠서..
         function drawList (pageNum = 1) {
 
             drawTable(selectedBoardType)
@@ -48,7 +47,7 @@
 
             return boardList.map((v, i) => {
 
-                let {boardId, boardTitle, registrationUser, registrationDate, viewCount, boardType} = v;
+                let {boardId, boardTitle, registrationUser, registrationDate, viewCount, boardType, boardIdHasFile} = v;
 
                 return `<tr id=${boardId}>
                     <td>
@@ -57,7 +56,8 @@
                     </td>
                     <td>${totalCount - _rowSize * (currentPage -1) - i}</td>
                     <td id="title">${boardTitle}</td>
-                    ${boardType === 'DATA_ROOM' ? `<td id="file"><i class="i_info"></i></td>` : ``}
+                    ${(boardType === 'DATA_ROOM' &&  boardIdHasFile != null) ? `<td id="file"><i class="i_info" id=${boardIdHasFile}></i></td>` 
+                    : (boardType === 'DATA_ROOM' &&  boardIdHasFile == null) ? `<td id="file"></td>` : ``}
                     <td id="usr">${registrationUser}</td>
                     <td id="regdt">${registrationDate}</td>
                     <td id="cnt">${viewCount}</td>
@@ -212,7 +212,7 @@
         //drawTable 파라미터로 boardType
         function drawTable(boardType) {
 
-            const containFile = o2web.utils.BOARD.hasFile(boardType)
+            const containFile = o2web.system.board.CmmnEvent.hasFile(boardType)
 
             if(containFile) {
                 const dataRoomTableHTML = getDataRoomTableHTML();

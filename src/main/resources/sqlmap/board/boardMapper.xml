@@ -22,6 +22,7 @@
         <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
         <result property="boardType" column="BRD_TYPE" jdbcType="VARCHAR"/>
+        <result property="boardIdHasFile" column="BRD_ID_FILE" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="fileListSelectMap" type="BoardFile">
@@ -38,18 +39,18 @@
         SELECT *
             FROM
             (SELECT ROWNUM AS RNUM, A.*
-             FROM   (SELECT BRD_ID, BRD_TITLE, VIEW_CNT, REG_USR, REG_DT, BRD_TYPE
-                FROM CMT_BRD
-                WHERE BRD_TYPE = #{boardType}
+             FROM   (SELECT cb.BRD_ID, cb.BRD_TITLE, cb.VIEW_CNT, cb.REG_USR, cb.REG_DT, cb.BRD_TYPE, cbf.BRD_ID_FILE
+                FROM CMT_BRD cb, (SELECT DISTINCT BRD_ID AS BRD_ID_FILE FROM CMT_BRD_FILE) cbf
+                WHERE cb.BRD_TYPE = #{boardType} and cb.BRD_ID = cbf.BRD_ID_FILE(+)
 
                 <if test='searchType == "BRD_TITLE" and searchValue != null'>
-                    AND BRD_TITLE LIKE '%'||#{searchValue}||'%'
+                    AND cb.BRD_TITLE LIKE '%'||#{searchValue}||'%'
                 </if>
 
                 <if test='searchType == "REG_USR" and searchValue != null'>
-                    AND REG_USR LIKE '%'||#{searchValue}||'%'
+                    AND cb.REG_USR LIKE '%'||#{searchValue}||'%'
                 </if>
-                ORDER BY REG_DT DESC) A)
+                ORDER BY cb.REG_DT DESC) A)
         <if test="pageNumber != null">
             WHERE <![CDATA[RNUM <= (#{pageNumber} * #{rowSize})]]>
             AND <![CDATA[RNUM >= ((#{pageNumber} - 1) * #{rowSize}) + 1]]>
@@ -148,5 +149,7 @@
         FROM CMT_BRD_FILE
         WHERE BRD_ID LIKE #{boardId}
     </select>
+
+
 
 </mapper>
