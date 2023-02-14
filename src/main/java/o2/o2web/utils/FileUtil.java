@@ -8,6 +8,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -15,9 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -58,28 +57,28 @@ public class FileUtil {
         return true;
     }
 
-    public boolean deleteFiles(List<String> fileIds) {
+    @Transactional
+    public void deleteFiles(List<String> fileIds) throws Exception{
+        //삭제할때 삭제갯수가 달라도 예외가 아님
+        //롤백하려면 try catch 사용안하고 throws??
+        //리턴타입 void? 예외를 던져줘야하니까
+        //Transactional은 런타임에러만 잡아줘서 RuntimeException를 던져줌
+        //throws Exception해줘야 해당메서드를 사용하는곳에서 컴파일에러를 내줌 그래서쓰는건가
 
-        try {
+
             List<String> fileNames = boardDAO.getFileNamesByIds(fileIds);
 
             Integer rs = boardDAO.deleteFilesByIds(fileIds);
             //롤백도 적용해보자
             if (rs != fileIds.size()) {
-                return false;
+                throw new RuntimeException("id와 삭제된 파일 갯수가 다름");
             }
 
             boolean isSuccess = deleteFilesInPath(fileNames);
 
             if(!isSuccess) {
-                return false;
+                throw new RuntimeException("경로의 파일을 삭제 못함");
             }
-
-            return true;
-
-        } catch (Throwable t) {
-            return false;
-        }
 
     }
 

@@ -11,7 +11,6 @@ public class Board {
     private String boardTitle;
     private Object boardContent;
     private byte[] byteArrayBoardContent;
-    //private Blob blobBoardContent;
     private String boardType;
     private Integer viewCount;
     private String registrationUser;

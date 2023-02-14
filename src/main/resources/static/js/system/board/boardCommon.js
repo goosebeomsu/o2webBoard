@@ -39,7 +39,8 @@
             }
 
             return fileFullName;
-        }
+        },
+
     }
 
     o2web.system.board = Object.assign(o2web.system.board || {}, {

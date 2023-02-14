@@ -5,9 +5,19 @@ import lombok.Getter;
 @Getter
 public class Message {
 
-    private String message;
+    private String MESSAGE;
+    private boolean SUCCESS;
 
-    public Message(String message) {
-        this.message = message;
+    public Message(String MESSAGE) {
+        this.MESSAGE = MESSAGE;
+    }
+
+    public Message(boolean SUCCESS) {
+        this.SUCCESS = SUCCESS;
+    }
+
+    public Message(String MESSAGE, boolean SUCCESS) {
+        this.MESSAGE = MESSAGE;
+        this.SUCCESS = SUCCESS;
     }
 }

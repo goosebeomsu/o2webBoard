@@ -32,7 +32,7 @@
                         "class":"btn blue",
                         click : function () {
                             _$selfdig = $(this);
-                            //유효성 추가예정
+
                             addBoard().then(value => {
                                 o2web.system.board.BrdMain(selectedBoard);
                                 _$selfdig.dialog("close");
@@ -90,6 +90,7 @@
                         deferred.resolve(result.boardId);
                     }
                 } else {
+                    alert(result.MESSAGE);
                     deferred.reject("fail");
                 }
             });
@@ -146,6 +147,7 @@
                 if (result.SUCCESS) {
                     deferred.resolve("success");
                 } else {
+                    alert(result.MESSAGE);
                     deferred.reject("fail");
                 }
             });

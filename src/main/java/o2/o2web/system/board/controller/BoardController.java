@@ -1,9 +1,9 @@
 package o2.o2web.system.board.controller;
 
 import o2.o2web.dto.Board;
-import o2.o2web.dto.DeleteBoardReq;
 import o2.o2web.dto.Message;
 import o2.o2web.dto.Search;
+import o2.o2web.dto.request.board.*;
 import o2.o2web.login.service.LoginService;
 import o2.o2web.system.board.service.BoardService;
 import o2.o2web.utils.FileUtil;
@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,14 +49,25 @@ public class BoardController {
 
     @PostMapping("/add")
     @ResponseBody
-    public Map addBoard(@ModelAttribute Board board, HttpSession session) {
+    public Map addBoard(@Validated @ModelAttribute AddBoardReq addBoardReq, BindingResult bindingResult, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
+
+        if(bindingResult.hasErrors()) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "게시글 등록에 실패하였습니다.");
+            return resultMap;
+        }
 
         try {
             String userId = loginService.getSessionId(session);
             String boardId = UUID.randomUUID().toString();
 
+            Board board = new Board();
+
+            board.setBoardTitle(addBoardReq.getBoardTitle());
+            board.setBoardContent(addBoardReq.getBoardContent());
+            board.setBoardType(addBoardReq.getBoardType());
             board.setRegistrationUser(userId);
             board.setBoardId(boardId);
 
@@ -111,11 +124,21 @@ public class BoardController {
 
     @PostMapping("/update/{boardId}")
     @ResponseBody
-    public Map updateBoard(@PathVariable String boardId, @ModelAttribute Board board) {
+    public Map updateBoard(@Validated @ModelAttribute UpdateBoardReq updateBoardReq, BindingResult bindingResult) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
+        if(bindingResult.hasErrors()) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "게시글 등록에 실패하였습니다.");
+            return resultMap;
+        }
+
         try {
+            Board board = new Board();
+            board.setBoardId(updateBoardReq.getBoardId());
+            board.setBoardContent(updateBoardReq.getBoardContent());
+            board.setBoardTitle(updateBoardReq.getBoardTitle());
             Integer rs = boardService.updateBoard(board);
 
             if(rs == null) {
@@ -123,7 +146,7 @@ public class BoardController {
             }
 
             resultMap.put("SUCCESS", true);
-            resultMap.put("boardId", boardId);
+            resultMap.put("boardId", updateBoardReq.getBoardId());
 
         } catch (Throwable t) {
             resultMap.put("SUCCESS", false);
@@ -136,19 +159,23 @@ public class BoardController {
 
     @PostMapping("/delete/{boardId}")
     @ResponseBody
-    public ResponseEntity<Message> deleteBoard(@PathVariable String boardId) {
+    public ResponseEntity<Message> deleteBoard(@PathVariable String boardId)  {
 
-        Integer rs = boardService.deleteBoard(boardId);
         List<String> fileIds = fileUtil.getFileIds(boardId);
 
-        if (fileIds.size() > 0) {
-            fileUtil.deleteFiles(fileIds);
-        }
+        try{
+            boardService.deleteBoard(boardId);
 
-        if (rs == null) {
+            if (fileIds.size() > 0) {
+                fileUtil.deleteFiles(fileIds);
+            }
+
+            return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+
+        } catch (Exception e) {
             return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+
     }
 
     @PostMapping("/delete")
@@ -157,20 +184,26 @@ public class BoardController {
 
         List<String> checkedIds = deleteBoardReq.getCheckedIdList();
 
-        boolean isSuccess = boardService.deleteCheckedBoards(checkedIds);
+        try {
 
-        for (String checkedId : checkedIds) {
-            List<String> fileIds = fileUtil.getFileIds(checkedId);
+            boardService.deleteCheckedBoards(checkedIds);
 
-            if (fileIds.size() > 0) {
-                fileUtil.deleteFiles(fileIds);
+            for (String checkedId : checkedIds) {
+                List<String> fileIds = fileUtil.getFileIds(checkedId);
+
+                if (fileIds.size() > 0) {
+                    fileUtil.deleteFiles(fileIds);
+                }
             }
+
+            return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (isSuccess) {
-            return new ResponseEntity<>(new Message("success"), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(new Message("삭제에 실패했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     @PostMapping("/plusViewCount/{boardId}")
@@ -188,18 +221,27 @@ public class BoardController {
 
     @PostMapping("/uploadFiles")
     @ResponseBody
-    public Map uploadFiles(@RequestParam(required = false) List<MultipartFile> uploadFile, @RequestParam String boardId, HttpSession session) {
+    public Map uploadFiles(@Validated @ModelAttribute UploadFilesReq uploadFilesReq, BindingResult bindingResult, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
-        if(uploadFile == null) {
+        if (bindingResult.hasErrors()) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "파일 업로드에 실패하였습니다");
+            return resultMap;
+        }
+
+        List<MultipartFile> uploadFiles = uploadFilesReq.getUploadFile();
+        String boardId = uploadFilesReq.getBoardId();
+
+        if(uploadFiles == null) {
             resultMap.put("SUCCESS", true);
             return resultMap;
         }
 
         try {
             String userId = loginService.getSessionId(session);
-            Boolean isSuccess = fileUtil.uploadFiles(uploadFile, boardId, userId);
+            Boolean isSuccess = fileUtil.uploadFiles(uploadFiles, boardId, userId);
 
             if(!isSuccess) {
                 resultMap.put("SUCCESS", false);
@@ -239,12 +281,19 @@ public class BoardController {
 
     @PostMapping("/updateFiles")
     @ResponseBody
-    public Map updateFiles(@RequestParam(required = false) List<MultipartFile> uploadFile,
-                           @RequestParam String boardId,
-                           @RequestParam(required = false) List<String> fileIds,
-                           HttpSession session) {
+    public Map updateFiles(@Validated @ModelAttribute UpdateFilesReq updateFilesReq, BindingResult bindingResult, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
+
+        if (bindingResult.hasErrors()) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "파일 업로드에 실패하였습니다");
+            return resultMap;
+        }
+
+        List<MultipartFile> uploadFile = updateFilesReq.getUploadFile();
+        List<String> fileIds = updateFilesReq.getFileIds();
+        String boardId = updateFilesReq.getBoardId();
 
         if(uploadFile == null && fileIds.size() == 0) {
             resultMap.put("SUCCESS", true);

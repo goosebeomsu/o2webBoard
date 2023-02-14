@@ -89,6 +89,7 @@
                         deferred.resolve("success");
                     }
                 } else {
+                    alert(result.MESSAGE)
                     deferred.reject('fail');
                 }
             })
@@ -115,6 +116,7 @@
                 if (result.SUCCESS) {
                     deferred.resolve("success");
                 } else {
+                    alert(result.MESSAGE);
                     deferred.reject("fail");
                 }
             });

@@ -5,6 +5,7 @@ import o2.o2web.dto.Search;
 import o2.o2web.system.board.dao.BoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -45,18 +46,24 @@ public class BoardService {
         return boardDAO.updateBoard(getConvertedBoard(board));
     }
 
-    public Integer deleteBoard(String boardId) {
-        return  boardDAO.deleteBoardById(boardId);
+    @Transactional
+    public void deleteBoard(String boardId) throws Exception {
+        Integer rs = boardDAO.deleteBoardById(boardId);
+        System.out.println("rs = " + rs);
+
+        if(rs != 1) {
+            throw new RuntimeException("정상삭제 X");
+        }
     }
 
-    public boolean deleteCheckedBoards(List<String> boardIdList) {
+    @Transactional
+    public void deleteCheckedBoards(List<String> boardIdList) throws Exception {
 
         Integer rs = boardDAO.deleteBoardsByIdList(boardIdList);
 
         if(rs != boardIdList.size()) {
-            return false;
+            throw new RuntimeException("정상삭제 X");
         }
-        return true;
     }
 
     public boolean plusViewCount(String boardId) {
