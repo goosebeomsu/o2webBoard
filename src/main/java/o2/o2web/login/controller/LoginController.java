@@ -1,6 +1,6 @@
 package o2.o2web.login.controller;
 
-import o2.o2web.dto.User;
+import o2.o2web.entity.User;
 import o2.o2web.login.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

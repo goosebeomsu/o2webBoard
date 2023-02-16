@@ -1,8 +1,7 @@
 package o2.o2web.system.board.service;
 
-import o2.o2web.dto.Board;
-import o2.o2web.dto.response.GetBoardListRes;
-import o2.o2web.dto.Search;
+import o2.o2web.entity.Board;
+import o2.o2web.dto.request.board.GetBoardsReq;
 import o2.o2web.system.board.dao.BoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +25,8 @@ public class BoardService {
         return boardDAO.addBoard(getConvertedBoard(board));
     }
 
-    public List<GetBoardListRes> getBoardListRes(Search search) {
-        return boardDAO.getBoardResList(search);
+    public List<Board> getBoardListRes(GetBoardsReq getBoardsReq) {
+        return boardDAO.getBoardResList(getBoardsReq);
     }
 
     public Board getBoard(String boardId) throws SQLException {
@@ -50,7 +49,6 @@ public class BoardService {
     @Transactional
     public void deleteBoard(String boardId) throws Exception {
         Integer rs = boardDAO.deleteBoardById(boardId);
-        System.out.println("rs = " + rs);
 
         if(rs != 1) {
             throw new RuntimeException("정상삭제 X");
@@ -79,8 +77,8 @@ public class BoardService {
         return board;
     }
 
-    public Integer getListTotalCount(Search search) {
-        return boardDAO.getListTotalCount(search);
+    public Integer getListTotalCount(GetBoardsReq getBoardsReq) {
+        return boardDAO.getListTotalCount(getBoardsReq);
     }
 
 }

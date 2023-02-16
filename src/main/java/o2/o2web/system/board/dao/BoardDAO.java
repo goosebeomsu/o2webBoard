@@ -1,9 +1,8 @@
 package o2.o2web.system.board.dao;
 
-import o2.o2web.dto.Board;
-import o2.o2web.dto.BoardFile;
-import o2.o2web.dto.response.GetBoardListRes;
-import o2.o2web.dto.Search;
+import o2.o2web.entity.Board;
+import o2.o2web.entity.BoardFile;
+import o2.o2web.dto.request.board.GetBoardsReq;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public interface BoardDAO {
 
     Integer addBoard(Board board);
 
-    List<GetBoardListRes> getBoardResList(Search search);
+    List<Board> getBoardResList(GetBoardsReq getBoardsReq);
 
     Board getBoardById(String boardId);
 
@@ -25,7 +24,7 @@ public interface BoardDAO {
 
     Integer updateViewCount(String boardId);
 
-    Integer getListTotalCount(Search search);
+    Integer getListTotalCount(GetBoardsReq getBoardsReq);
 
     Integer uploadBoardFile(BoardFile boardFile);
 

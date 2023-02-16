@@ -56,7 +56,7 @@
 
             return boardList.map((v, i) => {
 
-                let {boardId, boardTitle, registrationUser, registrationDate, viewCount, boardType, boardIdHasFile} = v;
+                let {boardId, boardTitle, registrationUser, registrationDate, viewCount, boardIdHasFile} = v;
 
                 return `<tr id=${boardId}>
                     <td>
@@ -72,14 +72,14 @@
                     <td>
                     <button type="button" class="btn btnSysCdEdit" id="edit">편집</button>
                     </td>
-               </tr>`
+                </tr>`
             }).join('');
         }
 
         function getNoticeListHTML(boardList, totalCount, currentPage) {
             return boardList.map((v, i) => {
 
-                let {boardId, boardTitle, registrationUser, registrationDate, viewCount, boardType, boardIdHasFile} = v;
+                let {boardId, boardTitle, registrationUser, registrationDate, viewCount} = v;
 
                 return `<tr id=${boardId}>
                     <td>

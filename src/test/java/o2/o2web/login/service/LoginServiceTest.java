@@ -1,6 +1,6 @@
 package o2.o2web.login.service;
 
-import o2.o2web.dto.User;
+import o2.o2web.entity.User;
 import o2.o2web.login.dao.LoginDAO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

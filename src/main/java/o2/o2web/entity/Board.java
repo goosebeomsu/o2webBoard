@@ -1,4 +1,4 @@
-package o2.o2web.dto;
+package o2.o2web.entity;
 
 import lombok.Data;
 
@@ -15,6 +15,7 @@ public class Board {
     private Integer viewCount;
     private String registrationUser;
     private Date registrationDate;
+    private String boardIdHasFile;
 
     public void updateBoardIdAndRegUser(String boardId, String registrationUser) {
         this.boardId = boardId;

@@ -1,8 +1,9 @@
 package o2.o2web.system.board.controller;
 
-import o2.o2web.dto.*;
+import o2.o2web.entity.Board;
+import o2.o2web.entity.BoardFile;
 import o2.o2web.dto.request.board.*;
-import o2.o2web.dto.response.GetBoardListRes;
+import o2.o2web.dto.response.Message;
 import o2.o2web.login.service.LoginService;
 import o2.o2web.system.board.service.BoardService;
 import o2.o2web.utils.FileUtil;
@@ -84,11 +85,17 @@ public class BoardController {
 
     @PostMapping("/getBoardList")
     @ResponseBody
-    public Map<String, Object> getBoardList(@RequestBody Search search) {
+    public Map<String, Object> getBoardList(@Validated @RequestBody GetBoardsReq getBoardsReq, BindingResult bindingResult) {
 
-        List<GetBoardListRes> boardList = boardService.getBoardListRes(search);
-        Integer listTotalCount = boardService.getListTotalCount(search);
         Map<String, Object> resultMap = new HashMap<>();
+
+        if(bindingResult.hasErrors()) {
+            resultMap.put("SUCCESS", false);
+            resultMap.put("MESSAGE", "리스트 불러오기 실패");
+            return resultMap;
+        }
+        List<Board> boardList = boardService.getBoardListRes(getBoardsReq);
+        Integer listTotalCount = boardService.getListTotalCount(getBoardsReq);
 
         resultMap.put("boardList", boardList);
         resultMap.put("listTotalCount", listTotalCount);

@@ -1,6 +1,6 @@
 package o2.o2web.system.board.service;
 
-import o2.o2web.dto.Board;
+import o2.o2web.entity.Board;
 import o2.o2web.system.board.dao.BoardDAO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

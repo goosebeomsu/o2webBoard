@@ -1,6 +1,6 @@
 package o2.o2web.utils;
 
-import o2.o2web.dto.BoardFile;
+import o2.o2web.entity.BoardFile;
 import o2.o2web.system.board.dao.BoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

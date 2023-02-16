@@ -1,4 +1,4 @@
-package o2.o2web.dto;
+package o2.o2web.dto.response;
 
 import lombok.Getter;
 

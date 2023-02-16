@@ -1,7 +1,7 @@
 package o2.o2web.dto.request.board;
 
 import lombok.Data;
-import o2.o2web.dto.Board;
+import o2.o2web.entity.Board;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

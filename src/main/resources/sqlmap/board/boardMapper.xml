@@ -5,7 +5,7 @@
 
 <mapper namespace="o2.o2web.system.board.dao.BoardDAO">
 
-    <resultMap id="boardSelectMap" type="board">
+    <resultMap id="boardSelectMap" type="Board">
         <result property="boardId" column="BRD_ID" jdbcType="VARCHAR"/>
         <result property="boardTitle" column="BRD_TITLE" jdbcType="VARCHAR"/>
         <result property="boardContent" column="BRD_CONT" jdbcType="BLOB"/>
@@ -13,15 +13,6 @@
         <result property="viewCount" column="VIEW_CNT" jdbcType="INTEGER"/>
         <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
-    </resultMap>
-
-    <resultMap id="boardListResSelectMap" type="GetBoardListRes">
-        <result property="boardId" column="BRD_ID" jdbcType="VARCHAR"/>
-        <result property="boardTitle" column="BRD_TITLE" jdbcType="VARCHAR"/>
-        <result property="viewCount" column="VIEW_CNT" jdbcType="INTEGER"/>
-        <result property="registrationUser" column="REG_USR" jdbcType="VARCHAR"/>
-        <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
-        <result property="boardType" column="BRD_TYPE" jdbcType="VARCHAR"/>
         <result property="boardIdHasFile" column="BRD_ID_FILE" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -35,7 +26,7 @@
         <result property="registrationDate" column="REG_DT" jdbcType="DATE"/>
     </resultMap>
 
-    <select id="getBoardResList" parameterType="search" resultMap="boardListResSelectMap">
+    <select id="getBoardResList" parameterType="getBoardsReq" resultMap="boardSelectMap">
         SELECT *
             FROM
             (SELECT ROWNUM AS RNUM, A.*
@@ -57,7 +48,7 @@
         </if>
     </select>
 
-    <select id="getListTotalCount" parameterType="search" resultType="int">
+    <select id="getListTotalCount" parameterType="getBoardsReq" resultType="int">
         SELECT count(*)
         FROM
         (SELECT ROWNUM AS RNUM, A.*
