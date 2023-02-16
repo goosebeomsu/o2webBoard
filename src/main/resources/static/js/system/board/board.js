@@ -29,13 +29,22 @@
             _param.boardType = selectedBoardType
 
             getBoardList(_param).then((response) => {
-                drawBoardList(response.boardList, response.listTotalCount, pageNum);
+                drawBoardList(response.boardList, response.listTotalCount, pageNum, selectedBoardType);
             })
         }
 
-        function drawBoardList(boardList, totalCount, pageNum) {
-            const boardListHtml = getBoardListHtml(boardList, totalCount, pageNum);
-            document.querySelector('#DataTablelist').innerHTML = boardListHtml;
+        function drawBoardList(boardList, totalCount, pageNum, boardType) {
+
+            const isHasFile = o2web.system.board.CmmnEvent.hasFile(boardType)
+
+            let boardListHTML = null;
+
+            if(isHasFile) {
+                boardListHTML = getDataRoomListHTML(boardList, totalCount, pageNum);
+            } else {
+                boardListHTML = getNoticeListHTML(boardList, totalCount, pageNum);
+            }
+            document.querySelector('#DataTablelist').innerHTML = boardListHTML;
             document.querySelector('.strTotalCnt').innerHTML = totalCount;
 
             o2web.common.CmmnEvent.DrawPageNum(_rowSize, pageNum, totalCount, drawList); // 페이징 출력
@@ -43,7 +52,7 @@
             addEvent();
         }
 
-        function getBoardListHtml(boardList, totalCount, currentPage) {
+        function getDataRoomListHTML(boardList, totalCount, currentPage) {
 
             return boardList.map((v, i) => {
 
@@ -56,8 +65,7 @@
                     </td>
                     <td>${totalCount - _rowSize * (currentPage -1) - i}</td>
                     <td id="title">${boardTitle}</td>
-                    ${(boardType === 'DATA_ROOM' &&  boardIdHasFile != null) ? `<td id="file"><i class="i_info" id=${boardIdHasFile}></i></td>` 
-                    : (boardType === 'DATA_ROOM' &&  boardIdHasFile == null) ? `<td id="file"></td>` : ``}
+                    ${boardIdHasFile != null ? `<td id="file"><i class="i_info" id=${boardIdHasFile}></i></td>` : `<td id="file"></td>`}
                     <td id="usr">${registrationUser}</td>
                     <td id="regdt">${registrationDate}</td>
                     <td id="cnt">${viewCount}</td>
@@ -66,6 +74,29 @@
                     </td>
                </tr>`
             }).join('');
+        }
+
+        function getNoticeListHTML(boardList, totalCount, currentPage) {
+            return boardList.map((v, i) => {
+
+                let {boardId, boardTitle, registrationUser, registrationDate, viewCount, boardType, boardIdHasFile} = v;
+
+                return `<tr id=${boardId}>
+                    <td>
+                        <input type="checkbox" name="ckbrdVal" title="선택" id=${'chk' + boardId}>
+                        <label for=${'chk' + boardId}></label>
+                    </td>
+                    <td>${totalCount - _rowSize * (currentPage -1) - i}</td>
+                    <td id="title">${boardTitle}</td>
+                    <td id="usr">${registrationUser}</td>
+                    <td id="regdt">${registrationDate}</td>
+                    <td id="cnt">${viewCount}</td>
+                    <td>
+                    <button type="button" class="btn btnSysCdEdit" id="edit">편집</button>
+                    </td>
+               </tr>`
+            }).join('');
+
         }
 
         async function getBoardList({boardType, searchType, searchValue, pageNumber, rowSize}) {
@@ -209,19 +240,18 @@
             await fetch(requestURL, {method: 'POST'}).then((response) => {return response.json()})
         }
 
-        //drawTable 파라미터로 boardType
         function drawTable(boardType) {
 
-            const containFile = o2web.system.board.CmmnEvent.hasFile(boardType)
+            const isHasFile = o2web.system.board.CmmnEvent.hasFile(boardType)
+            let tableHTML = null;
 
-            if(containFile) {
-                const dataRoomTableHTML = getDataRoomTableHTML();
-                document.querySelector('#tblSysbrdList').innerHTML = dataRoomTableHTML;
+            if(isHasFile) {
+                tableHTML = getDataRoomTableHTML();
             } else {
-                const NoticeTableHTML = getNoticeTableHTML();
-                document.querySelector('#tblSysbrdList').innerHTML = NoticeTableHTML;
+                tableHTML = getNoticeTableHTML();
             }
 
+            document.querySelector('#tblSysbrdList').innerHTML = tableHTML;
         }
 
         function getDataRoomTableHTML() {

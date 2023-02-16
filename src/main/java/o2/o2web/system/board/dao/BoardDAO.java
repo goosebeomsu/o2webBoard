@@ -2,6 +2,7 @@ package o2.o2web.system.board.dao;
 
 import o2.o2web.dto.Board;
 import o2.o2web.dto.BoardFile;
+import o2.o2web.dto.response.GetBoardListRes;
 import o2.o2web.dto.Search;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,7 +13,7 @@ public interface BoardDAO {
 
     Integer addBoard(Board board);
 
-    List getBoardResList(Search search);
+    List<GetBoardListRes> getBoardResList(Search search);
 
     Board getBoardById(String boardId);
 
@@ -28,11 +29,11 @@ public interface BoardDAO {
 
     Integer uploadBoardFile(BoardFile boardFile);
 
-    List getFileListByBoardId(String boardId);
+    List<BoardFile> getFileListByBoardId(String boardId);
 
     Integer deleteFilesByIds(List<String> fileIds);
 
-    List getFileNamesByIds(List<String> fileIds);
+    List<String> getFileNamesByIds(List<String> fileIds);
 
-    List getFileIdsByBoardId(String boardId);
+    List<String> getFileIdsByBoardId(String boardId);
 }

@@ -8,7 +8,7 @@
 
         const BOARD = o2web.system.board.CmmnEvent;
         const boardTitle = BOARD.getTitle(boardType);
-        const containFile = BOARD.hasFile(boardType);
+        const isHasFile = BOARD.hasFile(boardType);
 
         function renderBoardAddPopup() {
 
@@ -40,7 +40,7 @@
                         }
                     }],
                     open : function (){
-                        if(containFile) {
+                        if(isHasFile) {
                             o2web.utils.UIUtil.drawFileTransfer()
                         }
                         editData();
@@ -82,7 +82,7 @@
 
             o2.utils.Http.requestData('/system/board/add', param).done(function (result) {
                 if (result.SUCCESS) {
-                    if (containFile) {
+                    if (isHasFile) {
                         uploadFile(result.boardId).done(function (result) {
                             deferred.resolve("success");
                         });

@@ -3,12 +3,12 @@
         let $DLG_UI = $("#o2-dialog-01");
         let selectedBoard = boardType;
         let _fileInputNum = 0;
-        let _removeFileId=[];
+        let _deleteFileIdArr=[];
 
 
         const BOARD = o2web.system.board.CmmnEvent;
         const boardTitle = BOARD.getTitle(boardType);
-        const containFile = BOARD.hasFile(boardType);
+        const isHasFile = BOARD.hasFile(boardType);
 
 
         function renderBoardEditPopup() {
@@ -53,7 +53,7 @@
                     }],
                     open : function () {
                         getBoardDetail(boardId).then(result => {
-                            if(containFile) {
+                            if(isHasFile) {
                                o2web.utils.UIUtil.drawFileTransfer();
                                drawFileList(result.files);
                             }
@@ -79,9 +79,9 @@
 
             o2.utils.Http.requestData(requestURL, getBoardParam()).done(function (result) {
                 if (result.SUCCESS) {
-                    if (containFile) {
+                    if (isHasFile) {
                         updateFiles(result.boardId).done(function (result) {
-                            if (result == "success") {
+                            if (result === "success") {
                                 deferred.resolve("success");
                             }
                         })
@@ -110,7 +110,7 @@
             });
 
             formData.append("boardId", boardId);
-            formData.append("fileIds", _removeFileId);
+            formData.append("deleteFileIds", _deleteFileIdArr);
 
             o2.utils.Http.requestMultipart("/system/board/updateFiles", formData).done(function (result) {
                 if (result.SUCCESS) {
@@ -252,7 +252,7 @@
 
                 const fileId = $(this).closest("div").prop("id");
 
-                _removeFileId.push(fileId);
+                _deleteFileIdArr.push(fileId);
                 $(this).closest("div").remove();
             });
         }

@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class UploadFilesReq {
 
-    private List<MultipartFile> uploadFile;
     @NotNull
     private String boardId;
+    private List<MultipartFile> uploadFile;
 }

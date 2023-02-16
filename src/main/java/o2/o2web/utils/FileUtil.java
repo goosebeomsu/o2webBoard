@@ -22,23 +22,25 @@ import java.util.UUID;
 @Component
 public class FileUtil {
 
-    @Value("${file.path}")
-    private String filePath;
-    @Autowired
-    private BoardDAO boardDAO;
-    @Autowired
+    private final BoardDAO boardDAO;
+    private final String filePath;
     ResourceLoader resourceLoader;
 
+    @Autowired
+    public FileUtil(BoardDAO boardDAO, @Value("${file.path}") String filePath, ResourceLoader resourceLoader) {
+        this.boardDAO = boardDAO;
+        this.resourceLoader = resourceLoader;
+        this.filePath = filePath;
+    }
 
     public boolean uploadFiles(List<MultipartFile> uploadFiles, String boardId, String userId) {
 
         for (MultipartFile uploadFile : uploadFiles) {
             String originalFilename = uploadFile.getOriginalFilename();
 
-            BoardFile boardFile = createBoardFile(boardId, originalFilename, filePath, userId);
+            BoardFile boardFile = refineBoardFile(boardId, originalFilename, filePath, userId);
             Integer rs = boardDAO.uploadBoardFile(boardFile);
 
-            //롤백관련해서 고려해보기
             if(rs == null) {
                 return false;
             }
@@ -59,17 +61,11 @@ public class FileUtil {
 
     @Transactional
     public void deleteFiles(List<String> fileIds) throws Exception{
-        //삭제할때 삭제갯수가 달라도 예외가 아님
-        //롤백하려면 try catch 사용안하고 throws??
-        //리턴타입 void? 예외를 던져줘야하니까
-        //Transactional은 런타임에러만 잡아줘서 RuntimeException를 던져줌
-        //throws Exception해줘야 해당메서드를 사용하는곳에서 컴파일에러를 내줌 그래서쓰는건가
-
 
             List<String> fileNames = boardDAO.getFileNamesByIds(fileIds);
 
             Integer rs = boardDAO.deleteFilesByIds(fileIds);
-            //롤백도 적용해보자
+
             if (rs != fileIds.size()) {
                 throw new RuntimeException("id와 삭제된 파일 갯수가 다름");
             }
@@ -96,7 +92,7 @@ public class FileUtil {
     }
 
 
-    private BoardFile createBoardFile(String boardId, String originalFilename, String filePath, String userId) {
+    private BoardFile refineBoardFile(String boardId, String originalFilename, String filePath, String userId) {
         BoardFile boardFile = new BoardFile();
         boardFile.setFileId(UUID.randomUUID().toString());
         boardFile.setBoardId(boardId);
@@ -109,7 +105,7 @@ public class FileUtil {
 
     public String convertFileName(String originalFileName) {
         String extension = getFileExtension(originalFileName);
-        return UUID.randomUUID().toString() + "." + extension;
+        return UUID.randomUUID() + "." + extension;
     }
 
     public String getFileExtension(String fileName) {
@@ -135,11 +131,7 @@ public class FileUtil {
         return boardDAO.getFileIdsByBoardId(boardId);
     }
 
-    public List getFileList(String boardId) {
+    public List<BoardFile> getFileList(String boardId) {
         return boardDAO.getFileListByBoardId(boardId);
     }
-
-
-
-
 }

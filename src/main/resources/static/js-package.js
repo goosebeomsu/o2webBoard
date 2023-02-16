@@ -18,8 +18,6 @@ let AppLibFiles = {
             "js/system/board/board.js",
             "js/system/board/boardAdd.js",
             "js/system/board/boardDetail.js",
-
-            "js/data/groupcode/groupCodeCommon.js",
         ]
     },
 
@@ -36,7 +34,7 @@ let AppLibFiles = {
             "css/style_setting.css",
             "css/colormap-style.css",
             "css/linepattern-style.css",
-            "css/style_override.css" // 이게 항상 제일 밑이 있도록 유지
+            "css/style_override.css",
         ]
     }
 

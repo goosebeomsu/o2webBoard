@@ -1,9 +1,8 @@
 package o2.o2web.system.board.controller;
 
-import o2.o2web.dto.Board;
-import o2.o2web.dto.Message;
-import o2.o2web.dto.Search;
+import o2.o2web.dto.*;
 import o2.o2web.dto.request.board.*;
+import o2.o2web.dto.response.GetBoardListRes;
 import o2.o2web.login.service.LoginService;
 import o2.o2web.system.board.service.BoardService;
 import o2.o2web.utils.FileUtil;
@@ -49,7 +48,7 @@ public class BoardController {
 
     @PostMapping("/add")
     @ResponseBody
-    public Map addBoard(@Validated @ModelAttribute AddBoardReq addBoardReq, BindingResult bindingResult, HttpSession session) {
+    public Map<String, Object> addBoard(@Validated @ModelAttribute AddBoardReq addBoardReq, BindingResult bindingResult, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -63,13 +62,8 @@ public class BoardController {
             String userId = loginService.getSessionId(session);
             String boardId = UUID.randomUUID().toString();
 
-            Board board = new Board();
-
-            board.setBoardTitle(addBoardReq.getBoardTitle());
-            board.setBoardContent(addBoardReq.getBoardContent());
-            board.setBoardType(addBoardReq.getBoardType());
-            board.setRegistrationUser(userId);
-            board.setBoardId(boardId);
+            Board board = addBoardReq.toEntity(addBoardReq);
+            board.updateBoardIdAndRegUser(boardId, userId);
 
             Integer rs = boardService.addBoard(board);
 
@@ -79,7 +73,6 @@ public class BoardController {
 
             resultMap.put("SUCCESS", true);
             resultMap.put("boardId", boardId);
-
 
         } catch (Throwable t) {
             resultMap.put("SUCCESS", false);
@@ -91,9 +84,9 @@ public class BoardController {
 
     @PostMapping("/getBoardList")
     @ResponseBody
-    public Map getBoardList(@RequestBody Search search) {
+    public Map<String, Object> getBoardList(@RequestBody Search search) {
 
-        List boardList = boardService.getBoardListRes(search);
+        List<GetBoardListRes> boardList = boardService.getBoardListRes(search);
         Integer listTotalCount = boardService.getListTotalCount(search);
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -105,16 +98,17 @@ public class BoardController {
 
     @GetMapping("/{boardId}")
     @ResponseBody
-    public Map getBoard(@PathVariable String boardId)  {
+    public Map<String, Object> getBoard(@PathVariable String boardId)  {
         Map<String, Object> resultMap = new HashMap<>();
 
         try {
             Board board = boardService.getBoard(boardId);
-            List files = fileUtil.getFileList(boardId);
+            List<BoardFile> files = fileUtil.getFileList(boardId);
 
             resultMap.put("SUCCESS", true);
             resultMap.put("board", board);
             resultMap.put("files", files);
+
         } catch (Throwable t) {
             resultMap.put("SUCCESS", false);
         }
@@ -124,7 +118,7 @@ public class BoardController {
 
     @PostMapping("/update/{boardId}")
     @ResponseBody
-    public Map updateBoard(@Validated @ModelAttribute UpdateBoardReq updateBoardReq, BindingResult bindingResult) {
+    public Map<String, Object> updateBoard(@Validated @ModelAttribute UpdateBoardReq updateBoardReq, BindingResult bindingResult) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -135,10 +129,7 @@ public class BoardController {
         }
 
         try {
-            Board board = new Board();
-            board.setBoardId(updateBoardReq.getBoardId());
-            board.setBoardContent(updateBoardReq.getBoardContent());
-            board.setBoardTitle(updateBoardReq.getBoardTitle());
+            Board board = updateBoardReq.toEntity(updateBoardReq);
             Integer rs = boardService.updateBoard(board);
 
             if(rs == null) {
@@ -221,7 +212,7 @@ public class BoardController {
 
     @PostMapping("/uploadFiles")
     @ResponseBody
-    public Map uploadFiles(@Validated @ModelAttribute UploadFilesReq uploadFilesReq, BindingResult bindingResult, HttpSession session) {
+    public Map<String, Object> uploadFiles(@Validated @ModelAttribute UploadFilesReq uploadFilesReq, BindingResult bindingResult, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -241,7 +232,7 @@ public class BoardController {
 
         try {
             String userId = loginService.getSessionId(session);
-            Boolean isSuccess = fileUtil.uploadFiles(uploadFiles, boardId, userId);
+            boolean isSuccess = fileUtil.uploadFiles(uploadFiles, boardId, userId);
 
             if(!isSuccess) {
                 resultMap.put("SUCCESS", false);
@@ -259,7 +250,7 @@ public class BoardController {
 
     @PostMapping("/download")
     @ResponseBody
-    public ResponseEntity downLoadFile(@RequestParam String fileName) {
+    public ResponseEntity<Object> downLoadFile(@RequestParam String fileName) {
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -281,7 +272,7 @@ public class BoardController {
 
     @PostMapping("/updateFiles")
     @ResponseBody
-    public Map updateFiles(@Validated @ModelAttribute UpdateFilesReq updateFilesReq, BindingResult bindingResult, HttpSession session) {
+    public Map<String, Object> updateFiles(@Validated @ModelAttribute UpdateFilesReq updateFilesReq, BindingResult bindingResult, HttpSession session) {
 
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -292,7 +283,7 @@ public class BoardController {
         }
 
         List<MultipartFile> uploadFile = updateFilesReq.getUploadFile();
-        List<String> fileIds = updateFilesReq.getFileIds();
+        List<String> fileIds = updateFilesReq.getDeleteFileIds();
         String boardId = updateFilesReq.getBoardId();
 
         if(uploadFile == null && fileIds.size() == 0) {

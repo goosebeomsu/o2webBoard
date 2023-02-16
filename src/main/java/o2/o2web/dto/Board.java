@@ -16,4 +16,9 @@ public class Board {
     private String registrationUser;
     private Date registrationDate;
 
+    public void updateBoardIdAndRegUser(String boardId, String registrationUser) {
+        this.boardId = boardId;
+        this.registrationUser = registrationUser;
+    }
+
 }

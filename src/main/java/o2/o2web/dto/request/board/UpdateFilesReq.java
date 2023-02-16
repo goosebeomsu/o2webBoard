@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 public class UpdateFilesReq {
 
-    private List<MultipartFile> uploadFile;
     @NotNull
     private String boardId;
-    private List<String> fileIds;
+    private List<MultipartFile> uploadFile;
+    private List<String> deleteFileIds;
 }

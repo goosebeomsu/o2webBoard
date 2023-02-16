@@ -1,6 +1,7 @@
 package o2.o2web.system.board.service;
 
 import o2.o2web.dto.Board;
+import o2.o2web.dto.response.GetBoardListRes;
 import o2.o2web.dto.Search;
 import o2.o2web.system.board.dao.BoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class BoardService {
         return boardDAO.addBoard(getConvertedBoard(board));
     }
 
-    public List getBoardListRes(Search search) {
+    public List<GetBoardListRes> getBoardListRes(Search search) {
         return boardDAO.getBoardResList(search);
     }
 
@@ -69,10 +70,7 @@ public class BoardService {
     public boolean plusViewCount(String boardId) {
         Integer rs = boardDAO.updateViewCount(boardId);
 
-        if(rs != 1) {
-            return false;
-        }
-        return true;
+        return rs == 1;
     }
 
     private Board getConvertedBoard(Board board) {
