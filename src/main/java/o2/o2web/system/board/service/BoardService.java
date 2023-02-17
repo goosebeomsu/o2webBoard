@@ -29,15 +29,17 @@ public class BoardService {
         return boardDAO.getBoardResList(getBoardsReq);
     }
 
-    public Board getBoard(String boardId) throws SQLException {
+    public Board getBoard(String boardId) throws Exception {
 
         Board board = boardDAO.getBoardById(boardId);
 
-        if(board != null){
-            Blob blobBoardContent = (Blob) board.getBoardContent();
-            byte[] byteArrBoardContent = blobBoardContent.getBytes(1, (int) blobBoardContent.length());
-            board.setBoardContent(new String(byteArrBoardContent));
+        if(board == null) {
+            throw new Exception("해당 게시글이 없음");
         }
+
+        Blob blobBoardContent = (Blob) board.getBoardContent();
+        byte[] byteArrBoardContent = blobBoardContent.getBytes(1, (int) blobBoardContent.length());
+        board.setBoardContent(new String(byteArrBoardContent));
 
         return board;
     }
